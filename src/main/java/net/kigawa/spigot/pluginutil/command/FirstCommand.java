@@ -10,10 +10,11 @@ import java.util.List;
 public abstract class FirstCommand extends Command implements CommandExecutor, TabCompleter {
     PluginBase plugin;
 
-    public FirstCommand(PluginBase plugin) {
-        super(plugin);
+    public FirstCommand(PluginBase plugin, CommandParent commandParent) {
+        super(plugin, commandParent);
         this.plugin = plugin;
 
+        plugin.addCommand(this);
         plugin.getCommand(getName()).setExecutor(this);
         plugin.getCommand(getName()).setTabCompleter(this);
     }
