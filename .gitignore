@@ -1,2 +1,4 @@
 # Project exclude paths
 /target/
+/PluginUtil.iml
+/.idea/
