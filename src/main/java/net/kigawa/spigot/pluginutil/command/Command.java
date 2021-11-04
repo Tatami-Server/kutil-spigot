@@ -68,7 +68,8 @@ public abstract class Command extends TabList implements CommandParent {
         }
     }
 
-    public void addSubcommands(Command subCommand) {
+    @Override
+    public void addCommand(Command subCommand) {
         subCommand.setParentCommand(this);
         subCommands.add(subCommand);
         addTabLists(subCommand);
