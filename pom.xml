@@ -6,7 +6,7 @@
 
     <groupId>net.kigawa.spigot</groupId>
     <artifactId>SpigotUtil</artifactId>
-    <version>3.1dev</version>
+    <version>3.2dev</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -29,9 +29,9 @@
         <version>1.16.5-R0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-        <groupId>net.kigawa</groupId>
+        <groupId>com.github.kigawa8390</groupId>
         <artifactId>YamlUtil</artifactId>
-        <version>1.0a</version>
+        <version>1.0dev</version>
     </dependency>
     <dependency>
         <groupId>com.github.kigawa8390</groupId>
