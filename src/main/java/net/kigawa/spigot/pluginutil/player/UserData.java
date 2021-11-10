@@ -36,20 +36,20 @@ public class UserData extends YamlData {
         return true;
     }
 
-    public String[] getShowUUID() {
-        return showUUID;
-    }
-
     public void setShowUUID(String[] showUUID) {
         this.showUUID = showUUID;
     }
 
-    public String[] getHideUUID() {
-        return hideUUID;
-    }
-
     public void setHideUUID(String[] hideUUID) {
         this.hideUUID = hideUUID;
+    }
+
+    public String[] getShowUUID() {
+        return showUUID;
+    }
+
+    public String[] getHideUUID() {
+        return hideUUID;
     }
 
     public String getWorld() {
