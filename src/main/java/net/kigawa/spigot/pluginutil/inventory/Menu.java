@@ -8,6 +8,7 @@ import net.kigawa.spigot.pluginutil.player.User;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public abstract class Menu extends Storage {
     private final int page;
@@ -22,11 +23,9 @@ public abstract class Menu extends Storage {
 
     public Menu(Server server, User user, String title, int page, String name, StorageManager storageManager) {
         super(server, user.getPlayer(), 6, title, name, storageManager);
-        storageManager.addMenu(this);
         this.page = page;
         this.user = user;
         setSize(getInventory().getSize());
-        storageManager.addMenu(this);
         setup();
     }
 
@@ -72,6 +71,8 @@ public abstract class Menu extends Storage {
 
         fill(1, 7);
         fill(46, 52);
+
+        getStorageManager().addMenu(this);
     }
 
     public void onClick(InventoryClickEvent event) {
@@ -118,7 +119,11 @@ public abstract class Menu extends Storage {
         if (button.getType() != null) {
             setType(button.getType());
         }
-        getItemMeta();
+        ItemMeta itemMeta = getItemMeta();
+        if (itemMeta == null) {
+            newItemStack(Material.STONE);
+            getItemMeta();
+        }
         if (button.getName() != null) {
             setDisplayName(button.getName());
         }

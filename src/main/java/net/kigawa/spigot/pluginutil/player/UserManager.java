@@ -5,6 +5,8 @@ import net.kigawa.util.Util;
 import net.kigawa.yamlutil.Yaml;
 import net.kigawa.yamlutil.YamlData;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,13 +27,12 @@ public class UserManager<U extends User> implements Listener {
     private static Yaml yaml;
     private final List<U> userList = new ArrayList<>();
     private final PluginBase plugin;
-    private Scoreboard scoreboard;
+    private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 
     public UserManager(PluginBase plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         yaml = getUserYaml();
         this.plugin = plugin;
-        scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
     }
 
     public static Yaml getUserYaml() {
@@ -51,6 +52,26 @@ public class UserManager<U extends User> implements Listener {
         getUserYaml().save(data);
     }
 
+    public void clearEveryInv() {
+        executeUser(User::clearInventory);
+    }
+
+    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ) {
+        executeUser((U u) -> u.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ));
+    }
+
+    public void spawnParticle(Particle particle, Location location, int count) {
+        executeUser((U u) -> u.spawnParticle(particle, location, count));
+    }
+
+    public void setAllowFly(boolean fly) {
+        executeUser((U u) -> u.setAllowFly(fly));
+    }
+
+    public void setFly(boolean fly) {
+        executeUser((U u) -> u.setFly(fly));
+    }
+
     public List<U> getTeamUsers(String team) {
         List<U> list = new ArrayList<>();
         for (U user : userList) {
@@ -64,33 +85,27 @@ public class UserManager<U extends User> implements Listener {
     }
 
     public Team getEntryTeam(String entry) {
-        return scoreboard.getEntryTeam(entry);
+        U user = getUser(entry);
+        if (user == null) return scoreboard.getEntryTeam(entry);
+        return user.getTeam();
     }
 
     public void removeTeam(String name) {
+        for (U user : userList) {
+            Team team = user.getTeam(name);
+            if (team == null) continue;
+            team.unregister();
+        }
         Team team = scoreboard.getTeam(name);
         if (team == null) return;
         team.unregister();
-    }
-
-    public Team getTeam(String name) {
-        if (scoreboard.getTeam(name) == null) scoreboard.registerNewTeam(name);
-        return scoreboard.getTeam(name);
-    }
-
-    public Scoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    public void setScoreboard(Scoreboard scoreboard) {
-        this.scoreboard = scoreboard;
     }
 
     public void executeUser(Util.Process<U> process) {
         Util.executeProcesses(userList, process);
     }
 
-    public void sendTitle(String title) {
+    public void sendTitleMessage(String title) {
         executeUser((U u) -> u.sendTitleMessage(title));
     }
 
@@ -153,6 +168,15 @@ public class UserManager<U extends User> implements Listener {
         for (U user : userList) {
 
             if (user.equals(uuid)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public U getUser(String name) {
+        for (U user : userList) {
+            if (user.equals(name)) {
                 return user;
             }
         }

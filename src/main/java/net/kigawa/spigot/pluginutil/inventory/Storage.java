@@ -51,6 +51,12 @@ public class Storage<T extends Inventory> {
         storageManager.addStorage(this);
     }
 
+    public void close() {
+        for (HumanEntity entity : new ArrayList<>(inventory.getViewers())) {
+            entity.closeInventory();
+        }
+    }
+
     public boolean equals(String name) {
         return this.name.equals(name);
     }

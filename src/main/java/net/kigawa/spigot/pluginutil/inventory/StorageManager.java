@@ -1,7 +1,7 @@
 package net.kigawa.spigot.pluginutil.inventory;
 
-import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.spigot.pluginutil.player.User;
+import net.kigawa.bordgameplugin.player.User;
+import net.kigawa.bordgameplugin.util.plugin.all.PluginBase;
 import org.bukkit.Server;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,7 +23,14 @@ public class StorageManager implements Listener {
         this.plugin = plugin;
         server = plugin.getServer();
 
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        plugin.registerEvents(this);
+    }
+
+    public void removeMenu(User user, String name) {
+        Menu menu = getMenu(user, name);
+        if (menu == null) return;
+        menu.close();
+        menuList.remove(menu);
     }
 
     public Menu getMenu(User user, String name) {
@@ -36,6 +43,9 @@ public class StorageManager implements Listener {
     }
 
     public void removeMenu() {
+        for (Menu menu:menuList){
+            menu.close();
+        }
         menuList.clear();
     }
 
@@ -96,6 +106,7 @@ public class StorageManager implements Listener {
 
     @EventHandler
     public void inventoryClickEvent(InventoryClickEvent event) {
+        plugin.logger("inventoryClickEvent(InventoryClickEvent event)");
         for (Menu menu : new ArrayList<>(menuList)) {
             menu.onClick(event);
         }
