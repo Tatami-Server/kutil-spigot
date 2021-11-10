@@ -3,8 +3,6 @@ package net.kigawa.spigot.pluginutil;
 import net.kigawa.spigot.pluginutil.command.CommandParent;
 import net.kigawa.spigot.pluginutil.command.FirstCommand;
 import net.kigawa.spigot.pluginutil.message.Messenger;
-import net.kigawa.spigot.pluginutil.player.PlayerGetter;
-import net.kigawa.spigot.pluginutil.player.Teleporter;
 import net.kigawa.spigot.pluginutil.player.User;
 import net.kigawa.spigot.pluginutil.player.UserManager;
 import net.kigawa.spigot.pluginutil.recorder.Recorder;
@@ -25,9 +23,7 @@ public abstract class PluginBase extends JavaPlugin implements Logger, Listener,
     private final List<HasEnd> hasEnds = new ArrayList<>();
     private boolean debug;
     private Recorder recorder;
-    private PlayerGetter playerGetter;
     private Messenger messenger;
-    private Teleporter teleporter;
     private UserManager userManager;
 
     public abstract void addConfigDefault(FileConfiguration config);
@@ -53,9 +49,7 @@ public abstract class PluginBase extends JavaPlugin implements Logger, Listener,
         getServer().getPluginManager().registerEvents(this, this);
 
         recorder = new Recorder(this);
-        playerGetter = new PlayerGetter(this);
         messenger = new Messenger(this);
-        teleporter = new Teleporter();
         userManager = new UserManager(this);
 
         onStart();
@@ -78,10 +72,6 @@ public abstract class PluginBase extends JavaPlugin implements Logger, Listener,
             hasEnd.end();
         }
         User.onDisable(this);
-    }
-
-    public Teleporter getTeleporter() {
-        return teleporter;
     }
 
     public Messenger getMessenger() {
@@ -133,9 +123,5 @@ public abstract class PluginBase extends JavaPlugin implements Logger, Listener,
 
     public Recorder getRecorder() {
         return recorder;
-    }
-
-    public PlayerGetter getPlayerGetter() {
-        return playerGetter;
     }
 }

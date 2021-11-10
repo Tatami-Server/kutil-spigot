@@ -1,7 +1,7 @@
 package net.kigawa.spigot.pluginutil.inventory;
 
-import net.kigawa.bordgameplugin.player.User;
-import net.kigawa.bordgameplugin.util.plugin.all.PluginBase;
+import net.kigawa.spigot.pluginutil.PluginBase;
+import net.kigawa.spigot.pluginutil.player.User;
 import org.bukkit.Server;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
