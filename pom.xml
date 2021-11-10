@@ -17,6 +17,10 @@
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 <dependencies>
     <dependency>
@@ -30,9 +34,9 @@
         <version>1.0a</version>
     </dependency>
     <dependency>
-        <groupId>net.kigawa</groupId>
+        <groupId>com.github.kigawa8390</groupId>
         <artifactId>Util</artifactId>
-        <version>1.0a</version>
+        <version>1.0dev</version>
     </dependency>
 </dependencies>
 </project>
