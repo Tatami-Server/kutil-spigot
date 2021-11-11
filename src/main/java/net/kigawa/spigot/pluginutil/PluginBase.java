@@ -1,5 +1,6 @@
 package net.kigawa.spigot.pluginutil;
 
+import net.kigawa.spigot.pluginutil.command.Command;
 import net.kigawa.spigot.pluginutil.command.CommandParent;
 import net.kigawa.spigot.pluginutil.command.FirstCommand;
 import net.kigawa.spigot.pluginutil.message.Messenger;
@@ -102,11 +103,12 @@ public abstract class PluginBase extends JavaPlugin implements Logger, Listener,
         logger(Double.toString(message));
     }
 
-    public void addCommand(FirstCommand command) {
-        commands.add(command);
+    public void addCommand(Command command) {
+        FirstCommand firstCommand = (FirstCommand) command;
+        commands.add(firstCommand);
         List<String> permission = new ArrayList<>();
         permission.add(getName());
-        command.setPermission(permission);
+        firstCommand.setPermission(permission);
     }
 
     public void addHasEnd(HasEnd hasEnd) {
