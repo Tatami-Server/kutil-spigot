@@ -53,8 +53,11 @@ public abstract class PluginBase extends JavaPlugin implements Logger, Listener,
         messenger = new Messenger(this);
         userManager = new UserManager(this);
 
+        registerEvents(this);
+
         onStart();
     }
+
 
     @EventHandler
     public void joinEvent(PlayerJoinEvent event) {
