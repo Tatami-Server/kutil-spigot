@@ -18,4 +18,8 @@ public class InfoSender extends Sender {
         super(Util.changeListType(players, CommandSender.class));
         sendMessage(Util.changeListType(players, CommandSender.class), ChatColor.GREEN + title);
     }
+
+    public static String getString(String message) {
+        return ChatColor.GREEN + "Info: " + message;
+    }
 }

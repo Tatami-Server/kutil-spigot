@@ -32,7 +32,6 @@ public abstract class FirstCommand extends Command implements CommandExecutor, T
     public void addCommand(Command subCommand) {
         getSubCommands().add(subCommand);
         addTabLists(subCommand);
-        subCommand.setParentCommand(this);
     }
 
     @Override

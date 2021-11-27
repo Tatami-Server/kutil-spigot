@@ -9,13 +9,13 @@ import java.util.List;
 public abstract class Command extends TabList implements CommandParent {
     private PluginBase plugin;
     private List<Command> subCommands;
-    private List<String> permissions;
-    private Command parentCommand;
+    private final CommandParent commandParent;
 
 
     public Command(PluginBase pluginBase, CommandParent commandParent) {
         super(pluginBase);
         plugin = pluginBase;
+        this.commandParent = commandParent;
 
         commandParent.addCommand(this);
         subCommands = new ArrayList<>();
@@ -27,13 +27,17 @@ public abstract class Command extends TabList implements CommandParent {
 
     public abstract boolean isDefault();
 
+    public CommandParent getCommandParent() {
+        return commandParent;
+    }
+
     public String createErrormessage() {
         StringBuffer stringBuffer = new StringBuffer();
-        Command command = this;
+        CommandParent command = this;
         while (command != null) {
             stringBuffer.insert(0, " ");
             stringBuffer.insert(0, command.getName());
-            command = this.parentCommand;
+            command = command.getCommandParent();
         }
         stringBuffer.insert(0, "/");
         String error = errorMessage();
@@ -70,41 +74,29 @@ public abstract class Command extends TabList implements CommandParent {
 
     @Override
     public void addCommand(Command subCommand) {
-        subCommand.setParentCommand(this);
         subCommands.add(subCommand);
         addTabLists(subCommand);
     }
 
     public boolean checkPermission(CommandSender sender) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(permissions.get(0));
-        for (int i = 1; i < permissions.size(); i++) {
-            stringBuilder.append(".").append(permissions.get(i));
-        }
-        return sender.hasPermission(stringBuilder.toString()) | sender.hasPermission(stringBuilder + ".*") | isDefault();
+        StringBuffer sb = getPermission(sender);
+        return sb == null;
     }
 
-    public void setParentCommand(Command parentCommand) {
-        this.parentCommand = parentCommand;
-    }
-
-    public void setPermission(List<String> permission) {
-        List<String> permission1 = new ArrayList<>(permission);
-        permission1.add(getName());
-        List<Command> commands = getSubCommands();
-        if (commands != null) {
-            for (Command command : commands) {
-                command.setPermission(permission1);
-            }
-        }
-        this.permissions = permission1;
+    public StringBuffer getPermission(CommandSender sender) {
+        plugin.logger("get permission...");
+        StringBuffer sb = commandParent.getPermission(sender);
+        if (sb == null) return null;
+        sb.append(".").append(getName());
+        if (sender.hasPermission(sb.toString()) | sender.hasPermission(sb + ".*")) return null;
+        return sb;
     }
 
     public int getWordNumber() {
-        if (parentCommand == null) {
+        if (commandParent == null) {
             return 0;
         }
-        return parentCommand.getWordNumber() + 1;
+        return commandParent.getWordNumber() + 1;
     }
 
     public PluginBase getPlugin() {

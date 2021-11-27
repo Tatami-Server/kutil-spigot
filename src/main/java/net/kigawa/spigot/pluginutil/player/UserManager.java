@@ -102,7 +102,7 @@ public class UserManager<U extends User> implements Listener {
     }
 
     public void executeUser(Util.Process<U> process) {
-        Util.executeProcesses(userList, process);
+        Util.executeIterable(userList, process);
     }
 
     public void sendTitleMessage(String title) {
