@@ -80,7 +80,14 @@ public class UserManager<U extends User> implements Listener {
         executeUser(User::setNewScoreBord);
     }
 
+    /**
+     * @deprecated
+     */
     public void clearEveryInv() {
+        clearInventoryAll();
+    }
+
+    public void clearInventoryAll() {
         executeUser(User::clearInventory);
     }
 
