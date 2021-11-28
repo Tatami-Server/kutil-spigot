@@ -20,20 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class User {
+public class User<U extends User> {
     private final UUID uuid;
-    private final UserManager manager;
+    private final UserManager<U> manager;
     private Player player;
     private boolean isOnline;
     private List<String> groupList = new ArrayList<>();
     private String name;
     private Scoreboard scoreboard;
+    private boolean allowFly;
+    private List<User> hideUser = new ArrayList<>();
 
     private User(OfflinePlayer player, UserManager userManager, boolean isOnline) {
         this.isOnline = isOnline;
         this.manager = userManager;
         assert manager != null;
-        manager.addUser(this);
+        manager.addUser((U) this);
         uuid = player.getUniqueId();
         name = player.getName();
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -42,6 +44,7 @@ public class User {
     public User(Player player, UserManager manager) {
         this(player, manager, true);
         this.player = player;
+        allowFly = player.getAllowFlight();
     }
 
     public User(OfflinePlayer player, UserManager manager) {
@@ -112,6 +115,36 @@ public class User {
         event.getPlayer().teleport(location);
     }
 
+    public void setTeamDisplayName(String teamName, String displayName) {
+        Team team = getTeam(teamName);
+        team.setDisplayName(displayName);
+    }
+
+    public void setTeamColor(String teamName, ChatColor color) {
+        Team team = getTeam(teamName);
+        team.setColor(color);
+    }
+
+    public void joinEvent(PlayerJoinEvent event) {
+        player = event.getPlayer();
+        isOnline = true;
+        name = player.getName();
+        player.setScoreboard(scoreboard);
+        player.setAllowFlight(allowFly);
+        for (User user : hideUser) {
+            hide(manager.getPlugin(), user);
+        }
+        for (U user : manager.getUserList()) {
+            user.checkHide(this);
+        }
+    }
+
+    public void checkHide(User user) {
+        if (hideUser.contains(user)) {
+            hide(manager.getPlugin(), user);
+        }
+    }
+
     public void setMainScoreBord() {
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         player.setScoreboard(scoreboard);
@@ -127,9 +160,11 @@ public class User {
     }
 
     public void setTeam(String teamStr) {
-        if (teamStr == null) return;
-        Team team = getTeam(teamStr);
-        if (team == null) team = scoreboard.registerNewTeam(teamStr);
+        setTeam(teamStr, name);
+    }
+
+    public void setTeam(String teamName, String name) {
+        Team team = getTeam(teamName);
         team.addEntry(name);
     }
 
@@ -148,6 +183,7 @@ public class User {
     }
 
     public void setAllowFly(boolean fly) {
+        allowFly = fly;
         if (isOnline) {
             player.setAllowFlight(fly);
         }
@@ -155,7 +191,7 @@ public class User {
 
     public void setFly(boolean fly) {
         if (isOnline && player.getAllowFlight()) {
-            player.setFlying(fly);
+            player.setFlying(allowFly);
         }
     }
 
@@ -241,6 +277,7 @@ public class User {
     }
 
     public void show(Plugin plugin, User user) {
+        hideUser.remove(user);
         if (isOnline && user.isOnline) {
             player.showPlayer(plugin, user.getPlayer());
             return;
@@ -252,6 +289,7 @@ public class User {
     }
 
     public void hide(Plugin plugin, User user) {
+        hideUser.add(user);
         if (isOnline && user.isOnline) {
             player.hidePlayer(plugin, user.getPlayer());
             return;
@@ -280,12 +318,6 @@ public class User {
 
     public boolean containGroup(String name) {
         return groupList.contains(name);
-    }
-
-    public void joinEvent(PlayerJoinEvent event) {
-        player = event.getPlayer();
-        isOnline = true;
-        name = player.getName();
     }
 
     public Scoreboard getScoreboard() {
@@ -322,7 +354,7 @@ public class User {
         return null;
     }
 
-    public UserManager getManager() {
+    public UserManager<U> getManager() {
         return manager;
     }
 }

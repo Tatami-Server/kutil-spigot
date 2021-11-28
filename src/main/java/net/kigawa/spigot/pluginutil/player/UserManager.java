@@ -4,10 +4,7 @@ import net.kigawa.spigot.pluginutil.PluginBase;
 import net.kigawa.util.Util;
 import net.kigawa.yamlutil.Yaml;
 import net.kigawa.yamlutil.YamlData;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +18,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class UserManager<U extends User> implements Listener {
@@ -50,6 +48,36 @@ public class UserManager<U extends User> implements Listener {
 
     public static void saveData(UserData data) {
         getUserYaml().save(data);
+    }
+
+    public <U extends User> void joinTeamRandomUser(String teamName, int max, List<U> userList) {
+        int index;
+        Random random = new Random();
+        for (int i = 1; i < max; i++) {
+            if (userList.isEmpty()) {
+                break;
+            }
+            index = random.nextInt(userList.size());
+            U user = userList.get(index);
+            setTeamAll(teamName, user.getName());
+            userList.remove(index);
+        }
+    }
+
+    public void setTeamDisplayNameAll(String team, String displayName) {
+        executeUser((U u) -> u.setTeamDisplayName(team, displayName));
+    }
+
+    public void setTeamColorAll(String team, ChatColor color) {
+        executeUser((U u) -> u.setTeamColor(team, color));
+    }
+
+    public void setTeamAll(String team, String entry) {
+        executeUser((U u) -> u.setTeam(team, entry));
+    }
+
+    public void setNewScoreboardAll() {
+        executeUser(User::setNewScoreBord);
     }
 
     public void clearEveryInv() {
