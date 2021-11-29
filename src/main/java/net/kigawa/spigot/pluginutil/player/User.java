@@ -1,7 +1,9 @@
 package net.kigawa.spigot.pluginutil.player;
 
 import net.kigawa.spigot.pluginutil.PluginBase;
+import net.kigawa.spigot.pluginutil.inventory.PlayerStorage;
 import net.kigawa.spigot.pluginutil.inventory.Storage;
+import net.kigawa.spigot.pluginutil.inventory.StorageManager;
 import net.kigawa.spigot.pluginutil.message.Messenger;
 import net.kigawa.util.Util;
 import net.md_5.bungee.api.ChatMessageType;
@@ -20,10 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class User<U extends User> {
+public class User<U extends User<U>> {
     private final UUID uuid;
     private final UserManager<U> manager;
     private Player player;
+    private PlayerStorage<U> playerStorage;
     private boolean isOnline;
     private List<String> groupList = new ArrayList<>();
     private String name;
@@ -113,6 +116,15 @@ public class User<U extends User> {
     public static void teleportOnJoin(PluginBase plugin, UserData data, PlayerJoinEvent event) {
         Location location = new Location(plugin.getServer().getWorld(data.getWorld()), data.getX(), data.getY(), data.getZ(), data.getYaw(), data.getPith());
         event.getPlayer().teleport(location);
+    }
+
+    public U getUser() {
+        return (U) this;
+    }
+
+    public PlayerStorage<U> getPlayerStorage(StorageManager storageManager) {
+        if (playerStorage == null) playerStorage = new PlayerStorage<U>(getUser(), name, storageManager);
+        return playerStorage;
     }
 
     public void setTeamDisplayName(String teamName, String displayName) {
