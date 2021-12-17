@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 
 public class UserManager<U extends User> implements Listener {
     private static Yaml yaml;
@@ -48,6 +50,13 @@ public class UserManager<U extends User> implements Listener {
 
     public static void saveData(UserData data) {
         getUserYaml().save(data);
+    }
+
+    public <T> U getUser(T object, BiPredicate<U, T> biPredicate) {
+        for (U user : userList) {
+            if (biPredicate.test(user, object)) return user;
+        }
+        return null;
     }
 
     public <U extends User> void joinTeamRandomUser(String teamName, int max, List<U> userList) {
@@ -134,6 +143,14 @@ public class UserManager<U extends User> implements Listener {
         Team team = scoreboard.getTeam(name);
         if (team == null) return;
         team.unregister();
+    }
+
+    public void execTeamUser(String teamName, Consumer<U> consumer) {
+        for (U user : userList) {
+            if (user.isJoinTeam(teamName)) {
+                consumer.accept(user);
+            }
+        }
     }
 
     public void executeUser(Util.Process<U> process) {

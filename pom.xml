@@ -31,7 +31,7 @@
     <dependency>
         <groupId>com.github.kigawa8390</groupId>
         <artifactId>YamlUtil</artifactId>
-        <version>d29a3541</version>
+        <version>a8733be5</version>
     </dependency>
 </dependencies>
 </project>
