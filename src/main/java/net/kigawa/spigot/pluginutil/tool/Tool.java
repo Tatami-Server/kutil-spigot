@@ -25,6 +25,14 @@ public class Tool {
         toolManager.addTool(this);
     }
 
+    public void event(PlayerInteractEvent event) {
+        if (event.getItem().equals(itemStack)) consumer.accept(event);
+    }
+
+    public ItemStack getItemStack() {
+        return itemStack;
+    }
+
     public Consumer<PlayerInteractEvent> getConsumer() {
         return consumer;
     }

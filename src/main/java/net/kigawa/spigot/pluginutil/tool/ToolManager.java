@@ -21,8 +21,6 @@ public class ToolManager implements Listener {
 
     @EventHandler
     public void playerInteractEvent(PlayerInteractEvent event) {
-        for (Tool tool : toolSet) {
-            tool.getConsumer().accept(event);
-        }
+        for (Tool tool : toolSet) tool.event(event);
     }
 }

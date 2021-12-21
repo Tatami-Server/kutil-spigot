@@ -4,7 +4,7 @@ import net.kigawa.spigot.pluginutil.inventory.Menu;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class NextPage extends Button {
+public class NextPage extends ButtonBase {
     private Menu menu;
 
     public NextPage(Menu menu) {

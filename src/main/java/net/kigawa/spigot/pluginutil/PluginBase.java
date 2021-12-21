@@ -8,7 +8,6 @@ import net.kigawa.spigot.pluginutil.player.User;
 import net.kigawa.spigot.pluginutil.player.UserManager;
 import net.kigawa.spigot.pluginutil.recorder.Recorder;
 import net.kigawa.util.HasEnd;
-import net.kigawa.util.InterfaceLogger;
 import net.kigawa.util.Logger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public abstract class PluginBase extends JavaPlugin implements InterfaceLogger, Listener, CommandParent {
+public abstract class PluginBase extends JavaPlugin implements Listener, CommandParent {
     private final List<FirstCommand> commands = new ArrayList<>();
     private final List<HasEnd> hasEnds = new ArrayList<>();
     public static boolean debug;
@@ -36,52 +35,40 @@ public abstract class PluginBase extends JavaPlugin implements InterfaceLogger, 
 
     public abstract void addConfigDefault(FileConfiguration config);
 
+    public abstract void enable();
+
+    public abstract void disable();
+
+    public abstract void load();
+
+    /**
+     * @deprecated
+     */
     public abstract void onStart();
 
-    @Override
-    public void info(Object o) {
-        logger.info(o);
-    }
-
-    @Override
-    public void warning(Object o) {
-        logger.warning(o);
-    }
-
-    @Override
-    public void title(Object o) {
-        logger.title(o);
-    }
-
-    @Override
-    public void debug(Object o) {
-        logger.debug(o);
-    }
 
     @Override
     public void onLoad() {
-        logger("onLoad");
+        Logger.getInstance().info("loading...");
+
+
+        load();
     }
 
     @Override
     public void onEnable() {
+        Logger.getInstance().info("enable " + getName());
+
         this.saveDefaultConfig();
         FileConfiguration config = this.getConfig();
         config.addDefault("debug", false);
         config.addDefault("useDB", false);
         config.addDefault("log", true);
+
         addConfigDefault(config);
         config.options().copyDefaults(true);
         this.saveConfig();
 
-        logger = new Logger(
-                new File(getDataFolder(), "logs"),
-                config.getBoolean("log"),
-                config.getBoolean("debug"),
-                (String s) -> getLogger().log(Level.INFO, s),
-                false
-        );
-        info("enabling " + getName());
         debug = config.getBoolean("debug");
         useDB = config.getBoolean("useDB");
         log = config.getBoolean("log");
@@ -89,10 +76,17 @@ public abstract class PluginBase extends JavaPlugin implements InterfaceLogger, 
         messenger = new Messenger(this);
         userManager = new UserManager(this);
 
+        Level level = Level.INFO;
+        if (debug) level = Level.FINE;
+        File logDir = null;
+        if (log) logDir = new File(getDataFolder(), "log");
+
+        Logger.enable(getName(), getLogger(), level, logDir);
 
         registerEvents(this);
 
         onStart();
+        enable();
     }
 
 
@@ -108,11 +102,13 @@ public abstract class PluginBase extends JavaPlugin implements InterfaceLogger, 
 
     @Override
     public void onDisable() {
-        logger("onDisable");
+        Logger.getInstance().info("disable " + getName());
         for (HasEnd hasEnd : hasEnds) {
             hasEnd.end();
         }
         User.onDisable(this);
+
+        disable();
     }
 
     public Messenger getMessenger() {

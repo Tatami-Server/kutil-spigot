@@ -4,10 +4,14 @@ import net.kigawa.spigot.pluginutil.player.User;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class DecideButton extends Button {
+public abstract class DecideButton extends Button {
     private final User user;
 
+    /**
+     * @deprecated
+     */
     public DecideButton(User user) {
+        super(null, user.getName(), null);
         this.user = user;
     }
 
@@ -24,11 +28,6 @@ public class DecideButton extends Button {
     @Override
     public String[] descriptions() {
         return null;
-    }
-
-    @Override
-    public void onClick(InventoryClickEvent event) {
-        user.decide();
     }
 
     @Override

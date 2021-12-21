@@ -1,8 +1,11 @@
 package net.kigawa.spigot.pluginutil.player;
 
 import net.kigawa.spigot.pluginutil.PluginBase;
+import net.kigawa.spigot.pluginutil.inventory.PlayerStorage;
 import net.kigawa.spigot.pluginutil.inventory.Storage;
+import net.kigawa.spigot.pluginutil.inventory.StorageManager;
 import net.kigawa.spigot.pluginutil.message.Messenger;
+import net.kigawa.spigot.pluginutil.tool.Tool;
 import net.kigawa.util.Util;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,6 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -20,10 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class User<U extends User> {
+public class User<U extends User<U>> {
     private final UUID uuid;
     private final UserManager<U> manager;
     private Player player;
+    private PlayerStorage<U> playerStorage;
     private boolean isOnline;
     private List<String> groupList = new ArrayList<>();
     private String name;
@@ -115,6 +120,25 @@ public class User<U extends User> {
         event.getPlayer().teleport(location);
     }
 
+    public void addTool(Tool... tool) {
+        ItemStack[] itemStacks = new ItemStack[tool.length];
+        for (int i = 0; i < tool.length; i++) itemStacks[i] = tool[i].getItemStack();
+        addItem(itemStacks);
+    }
+
+    public void addItem(ItemStack... itemStack) {
+        player.getInventory().addItem(itemStack);
+    }
+
+    public U getUser() {
+        return (U) this;
+    }
+
+    public PlayerStorage<U> getPlayerStorage(StorageManager storageManager) {
+        if (playerStorage == null) playerStorage = new PlayerStorage<U>(getUser(), name, storageManager);
+        return playerStorage;
+    }
+
     public void setTeamDisplayName(String teamName, String displayName) {
         Team team = getTeam(teamName);
         team.setDisplayName(displayName);
@@ -170,7 +194,7 @@ public class User<U extends User> {
 
     public Team getTeam(String teamName) {
         Team team = scoreboard.getTeam(teamName);
-        if (team != null) team = scoreboard.registerNewTeam(teamName);
+        if (team == null) team = scoreboard.registerNewTeam(teamName);
         return team;
     }
 
@@ -201,9 +225,6 @@ public class User<U extends User> {
 
     public boolean equals(User user) {
         return equals(user.getUuid());
-    }
-
-    public void decide() {
     }
 
     public boolean isJoinTeam(String name) {

@@ -1,5 +1,6 @@
 package net.kigawa.spigot.pluginutil;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -13,6 +14,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public class PluginUtil {
+
+    public static String getCraftPackage() {
+        String nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        return "org.bukkit.craftbukkit." + nmsVersion;
+    }
+
     public static World getWorld(CommandSender sender) {
         World world = null;
         if (sender instanceof Player | sender instanceof BlockCommandSender) {

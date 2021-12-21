@@ -62,7 +62,7 @@ public class UserManager<U extends User> implements Listener {
     public <U extends User> void joinTeamRandomUser(String teamName, int max, List<U> userList) {
         int index;
         Random random = new Random();
-        for (int i = 1; i < max; i++) {
+        for (int i = 0; i < max; i++) {
             if (userList.isEmpty()) {
                 break;
             }
