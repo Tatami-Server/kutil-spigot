@@ -16,11 +16,6 @@ public abstract class FirstCommand extends Command implements CommandExecutor, T
         this.plugin = plugin;
 
         plugin.addCommand(this);
-
-        PluginCommand command = plugin.getCommand(getName());
-        assert command != null;
-        command.setExecutor(this);
-        command.setTabCompleter(this);
     }
 
     @Override
