@@ -194,7 +194,7 @@ public class User<U extends User<U>> {
 
     public Team getTeam(String teamName) {
         Team team = scoreboard.getTeam(teamName);
-        if (team == null) team = scoreboard.registerNewTeam(teamName);
+        if (team != null) team = scoreboard.registerNewTeam(teamName);
         return team;
     }
 
@@ -225,6 +225,9 @@ public class User<U extends User<U>> {
 
     public boolean equals(User user) {
         return equals(user.getUuid());
+    }
+
+    public void decide() {
     }
 
     public boolean isJoinTeam(String name) {
