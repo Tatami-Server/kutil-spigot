@@ -3,7 +3,6 @@ package net.kigawa.spigot.pluginutil.command;
 import net.kigawa.spigot.pluginutil.PluginBase;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 
 import java.util.List;
