@@ -11,7 +11,7 @@ import java.util.List;
 public class CommandManager extends LogSender {
     private static CommandManager commandManager;
 
-    private final List<Command> commandList = new ArrayList<>();
+    private final List<AbstractCmdProcess> commandList = new ArrayList<>();
     private final PluginBase pluginBase;
 
     private CommandManager(PluginBase pluginBase) {
@@ -26,6 +26,13 @@ public class CommandManager extends LogSender {
         commandManager = new CommandManager(pluginBase);
     }
 
+    public AbstractCmdProcess getCommand(String name) {
+        for (AbstractCmdProcess cmd : commandList) {
+            if (cmd.getName().equals(name)) return cmd;
+        }
+        return null;
+    }
+
     public void setExecutor(AbstractCmdProcess cmdProcess) {
         PluginCommand pluginCommand = pluginBase.getCommand(cmdProcess.getName());
         if (pluginCommand == null) {
@@ -33,5 +40,6 @@ public class CommandManager extends LogSender {
             return;
         }
         pluginCommand.setExecutor(cmdProcess);
+        commandList.add(cmdProcess);
     }
 }

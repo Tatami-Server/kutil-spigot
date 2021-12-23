@@ -24,6 +24,7 @@ public class AbstractCmdProcess implements CommandExecutor {
         AbstractCmd latest = null;
         CommandVars commandVars = commandLine.getCommandVars();
         AbstractCmd cmd;
+        int arg = 0;
 
         for (String cmdStr : commandLine) {
             if (commands == null) cmd = this.command;
@@ -36,11 +37,12 @@ public class AbstractCmdProcess implements CommandExecutor {
                 else break;
             latest = cmd;
             commands = cmd.getCommands();
+            arg++;
         }
 
         if (latest == null) return false;
 
-        commandSender.sendMessage(latest.onCommand(commandLine));
+        commandSender.sendMessage(latest.onCommand(commandLine,arg));
 
         return true;
     }

@@ -21,6 +21,10 @@ public class CommandLine implements Iterable<String> {
         this.command = command;
     }
 
+    public int size() {
+        return commandLine.size();
+    }
+
     public int getInt(String key) {
         return commandVars.getInt(key);
     }
@@ -37,7 +41,7 @@ public class CommandLine implements Iterable<String> {
         return commandVars;
     }
 
-    public List<String> getCommandLine() {
+    protected List<String> getCommandLine() {
         return new ArrayList<>(commandLine);
     }
 

@@ -1,13 +1,13 @@
 package net.kigawa.spigot.pluginutil.command;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class Commands implements Iterable<AbstractCmd> {
-    private final Set<AbstractCmd> commands = new HashSet<>();
+    private final List<AbstractCmd> commands = new ArrayList<>();
 
     protected Commands() {
     }
@@ -17,6 +17,14 @@ public class Commands implements Iterable<AbstractCmd> {
             if (cmd.matchCommand(label)) return cmd;
         }
         return null;
+    }
+
+    public AbstractCmd get(int i) {
+        return commands.get(i);
+    }
+
+    public int size() {
+        return commands.size();
     }
 
     public void addCommands(AbstractCmd... commands) {
