@@ -26,12 +26,12 @@ public class CommandManager extends LogSender {
         commandManager = new CommandManager(pluginBase);
     }
 
-    public void setExecutor(FirstCommand firstCommand) {
-        PluginCommand pluginCommand = pluginBase.getCommand(firstCommand.getName());
+    public void setExecutor(AbstractCmdProcess cmdProcess) {
+        PluginCommand pluginCommand = pluginBase.getCommand(cmdProcess.getName());
         if (pluginCommand == null) {
             Logger.getInstance().warning("can't register command");
             return;
         }
-        pluginCommand.setExecutor(firstCommand);
+        pluginCommand.setExecutor(cmdProcess);
     }
 }

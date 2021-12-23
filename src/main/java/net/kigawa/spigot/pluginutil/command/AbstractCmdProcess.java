@@ -4,29 +4,38 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class AbstractCmdProcess implements CommandExecutor, CommandParent {
-    private final Commands commands = new Commands();
+public class AbstractCmdProcess implements CommandExecutor {
+    private final AbstractCmd command;
 
-    public AbstractCmdProcess() {
+    public AbstractCmdProcess(AbstractCmd command) {
+        this.command = command;
+        CommandManager.getInstance().setExecutor(this);
+    }
+
+    public String getName() {
+        return command.getName();
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         final CommandLine commandLine = new CommandLine(commandSender, command, s, strings);
 
-        Commands commands = this.commands;
+        Commands commands = null;
         AbstractCmd latest = null;
         CommandVars commandVars = commandLine.getCommandVars();
+        AbstractCmd cmd;
 
         for (String cmdStr : commandLine) {
-            AbstractCmd abstractCmd = commands.getCommand(cmdStr);
-            if (abstractCmd == null) break;
-            if (abstractCmd.isVar())
-                if (abstractCmd.allowValue(cmdStr))
-                    abstractCmd.setValue(commandVars, cmdStr);
+            if (commands == null) cmd = this.command;
+            else cmd = commands.getCommand(cmdStr);
+
+            if (cmd == null) break;
+            if (cmd.isVar())
+                if (cmd.allowValue(cmdStr))
+                    cmd.setValue(commandVars, cmdStr);
                 else break;
-            latest = abstractCmd;
-            commands = abstractCmd.getCommands();
+            latest = cmd;
+            commands = cmd.getCommands();
         }
 
         if (latest == null) return false;
@@ -34,13 +43,5 @@ public class AbstractCmdProcess implements CommandExecutor, CommandParent {
         commandSender.sendMessage(latest.onCommand(commandLine));
 
         return true;
-    }
-
-    @Override
-    public void addCommands(AbstractCmd... commands) {
-        this.commands.addCommands(commands);
-        for (AbstractCmd cmd : commands) {
-            cmd.setCommandParent(this);
-        }
     }
 }
