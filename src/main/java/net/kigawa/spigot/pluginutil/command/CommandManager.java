@@ -1,14 +1,13 @@
 package net.kigawa.spigot.pluginutil.command;
 
+import net.kigawa.log.LogSender;
 import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.util.LogSender;
-import net.kigawa.util.Logger;
 import org.bukkit.command.PluginCommand;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandManager extends LogSender {
+public class CommandManager implements LogSender {
     private static CommandManager commandManager;
 
     private final List<AbstractCmdProcess> commandList = new ArrayList<>();
@@ -36,7 +35,7 @@ public class CommandManager extends LogSender {
     public void setExecutor(AbstractCmdProcess cmdProcess) {
         PluginCommand pluginCommand = pluginBase.getCommand(cmdProcess.getName());
         if (pluginCommand == null) {
-            Logger.getInstance().warning("can't register command");
+            warning("can't register command");
             return;
         }
         pluginCommand.setExecutor(cmdProcess);

@@ -1,12 +1,9 @@
 package net.kigawa.spigot.pluginutil.game;
 
+import net.kigawa.interfaces.HasEnd;
 import net.kigawa.spigot.pluginutil.PluginBase;
 import net.kigawa.spigot.pluginutil.command.CommandParent;
 import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
-import net.kigawa.spigot.scotlandplugin.game.command.CreateCommands;
-import net.kigawa.spigot.scotlandplugin.game.command.GameCommandBase;
-import net.kigawa.spigot.scotlandplugin.game.command.GameCommands;
-import net.kigawa.util.HasEnd;
 import net.kigawa.util.Util;
 import org.bukkit.event.Listener;
 
@@ -17,19 +14,10 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
     private final List<D> dataList;
     private final List<G> gameList = new ArrayList<>();
     private final PluginBase plugin;
-    private final CommandParent command;
-    private final CreateCommands createCommands;
-    private final GameCommands gameCommands;
 
     public GameManagerBase(PluginBase plugin, CommandParent command) {
         dataList = plugin.getRecorder().loadAll(getDataClass(), getName());
         this.plugin = plugin;
-        this.command = command;
-
-        createCommands = new CreateCommands(plugin, this,command);
-        gameCommands = new GameCommands(plugin, this,command);
-        command.addCommand(createCommands);
-        command.addCommand(gameCommands);
 
         plugin.addHasEnd(this);
         plugin.registerEvents(this);
@@ -45,24 +33,12 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
 
     public abstract Class<G> getGameClass();
 
-    public GameCommands getGameCommands() {
-        return gameCommands;
-    }
-
     public void execGame(Util.Process<G> process) {
         Util.executeIterable(getGameList(), process);
     }
 
     public void save(D data) {
         plugin.getRecorder().save(data, getName());
-    }
-
-    public void addGameCommand(GameCommandBase subcommand) {
-        gameCommands.addCommand(subcommand);
-    }
-
-    public void addCreateCommand(GameCommandBase subcommand) {
-        createCommands.addCommand(subcommand);
     }
 
     public void end() {

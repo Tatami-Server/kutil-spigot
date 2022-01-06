@@ -1,15 +1,12 @@
 package net.kigawa.spigot.pluginutil;
 
-import net.kigawa.spigot.pluginutil.command.Command;
+import net.kigawa.interfaces.HasEnd;
+import net.kigawa.log.Logger;
 import net.kigawa.spigot.pluginutil.command.CommandParent;
-import net.kigawa.spigot.pluginutil.command.FirstCommand;
 import net.kigawa.spigot.pluginutil.message.Messenger;
 import net.kigawa.spigot.pluginutil.player.User;
 import net.kigawa.spigot.pluginutil.player.UserManager;
 import net.kigawa.spigot.pluginutil.recorder.Recorder;
-import net.kigawa.util.HasEnd;
-import net.kigawa.util.Logger;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,12 +20,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 public abstract class PluginBase extends JavaPlugin implements Listener, CommandParent {
-    private final List<FirstCommand> commands = new ArrayList<>();
     private final List<HasEnd> hasEnds = new ArrayList<>();
     public static boolean debug;
     public static boolean useDB;
     public static boolean log;
-    private Logger logger;
+    private net.kigawa.log.Logger logger;
     private Recorder recorder;
     private Messenger messenger;
     private UserManager userManager;
@@ -151,25 +147,8 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
         logger(Double.toString(message));
     }
 
-    public void addCommand(Command command) {
-        FirstCommand firstCommand = (FirstCommand) command;
-        commands.add(firstCommand);
-        List<String> permission = new ArrayList<>();
-        permission.add(getName());
-    }
-
-    @Override
-    public StringBuffer getPermission(CommandSender sender) {
-        if (sender.hasPermission(getName()) | sender.hasPermission(getName() + ".*")) return null;
-        return new StringBuffer(getName());
-    }
-
     public void addHasEnd(HasEnd hasEnd) {
         hasEnds.add(hasEnd);
-    }
-
-    public List<FirstCommand> getCommands() {
-        return commands;
     }
 
     public UserManager getUserManager() {
@@ -178,11 +157,6 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
 
     public Recorder getRecorder() {
         return recorder;
-    }
-
-    @Override
-    public int getWordNumber() {
-        return 0;
     }
 
     public CommandParent getCommandParent() {

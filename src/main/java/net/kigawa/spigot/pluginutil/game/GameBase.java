@@ -1,15 +1,15 @@
 package net.kigawa.spigot.pluginutil.game;
 
+import net.kigawa.log.LogSender;
 import net.kigawa.spigot.pluginutil.PluginBase;
 import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
 import net.kigawa.spigot.pluginutil.player.User;
 import net.kigawa.spigot.pluginutil.player.UserManager;
-import net.kigawa.util.LogSender;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public abstract class GameBase<D extends GameDataBase, M extends GameManagerBase, U extends User> extends LogSender {
+public abstract class GameBase<D extends GameDataBase, M extends GameManagerBase, U extends User> implements LogSender {
     private final D data;
     private final M manager;
     private final PluginBase plugin;
@@ -21,7 +21,6 @@ public abstract class GameBase<D extends GameDataBase, M extends GameManagerBase
     private int min = 0;
 
     public GameBase(D data, M manager) {
-        super(manager.getPlugin());
         this.data = data;
         this.manager = manager;
         plugin = manager.getPlugin();
