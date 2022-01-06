@@ -31,7 +31,7 @@
     <dependency>
         <groupId>net.kigawa</groupId>
         <artifactId>yaml-util</artifactId>
-        <version>3.15dev</version>
+        <version>3.16dev</version>
     </dependency>
 </dependencies>
 </project>

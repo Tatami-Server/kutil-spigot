@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.logging.Level;
 
 public abstract class PluginBase extends JavaPlugin implements Listener, CommandParent {
-    private final List<HasEnd> hasEnds = new ArrayList<>();
     public static boolean debug;
     public static boolean useDB;
     public static boolean log;
+    private final List<HasEnd> hasEnds = new ArrayList<>();
     private net.kigawa.log.Logger logger;
     private Recorder recorder;
     private Messenger messenger;
