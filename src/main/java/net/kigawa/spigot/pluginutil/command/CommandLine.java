@@ -10,6 +10,7 @@ import java.util.List;
 
 public class CommandLine implements Iterable<String> {
     private final List<String> commandLine = new ArrayList<>();
+    private final List<AbstractCmd> usedCommands = new ArrayList<>();
     private final CommandSender sender;
     private final Command command;
     private final CommandVars commandVars = new CommandVars();
@@ -19,6 +20,14 @@ public class CommandLine implements Iterable<String> {
         Collections.addAll(commandLine, strings);
         this.sender = sender;
         this.command = command;
+    }
+
+    public void addUsedCmd(AbstractCmd cmd) {
+        usedCommands.add(cmd);
+    }
+
+    public List<AbstractCmd> getUsedCommands() {
+        return new ArrayList<>(usedCommands);
     }
 
     public int size() {

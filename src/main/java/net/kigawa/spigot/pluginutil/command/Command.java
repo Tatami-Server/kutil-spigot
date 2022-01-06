@@ -17,7 +17,6 @@ public abstract class Command extends TabList implements CommandParent {
         plugin = pluginBase;
         this.commandParent = commandParent;
 
-        commandParent.addCommand(this);
         subCommands = new ArrayList<>();
     }
 

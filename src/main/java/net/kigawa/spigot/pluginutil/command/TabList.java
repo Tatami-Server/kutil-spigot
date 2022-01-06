@@ -1,15 +1,15 @@
 package net.kigawa.spigot.pluginutil.command;
 
+import net.kigawa.interfaces.Named;
+import net.kigawa.log.LogSender;
 import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.util.LogSender;
-import net.kigawa.util.Named;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TabList extends LogSender implements Named {
+public abstract class TabList implements Named, LogSender {
     List<TabList> tabLists;
 
     /**
