@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class PluginUtil {
+public class SpigotUtil {
 
     public static String getCraftPackage() {
         String nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];

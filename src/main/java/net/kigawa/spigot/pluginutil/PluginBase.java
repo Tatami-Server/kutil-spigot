@@ -1,7 +1,9 @@
 package net.kigawa.spigot.pluginutil;
 
+import net.kigawa.file.FileUtil;
 import net.kigawa.interfaces.HasEnd;
 import net.kigawa.log.Logger;
+import net.kigawa.spigot.pluginutil.command.CommandManager;
 import net.kigawa.spigot.pluginutil.command.CommandParent;
 import net.kigawa.spigot.pluginutil.message.Messenger;
 import net.kigawa.spigot.pluginutil.player.User;
@@ -40,7 +42,8 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
     /**
      * @deprecated
      */
-    public abstract void onStart();
+    public void onStart() {
+    }
 
 
     @Override
@@ -53,8 +56,6 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
 
     @Override
     public void onEnable() {
-        Logger.getInstance().info("enable " + getName());
-
         this.saveDefaultConfig();
         FileConfiguration config = this.getConfig();
         config.addDefault("debug", false);
@@ -68,16 +69,20 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
         debug = config.getBoolean("debug");
         useDB = config.getBoolean("useDB");
         log = config.getBoolean("log");
-        recorder = new Recorder(this);
-        messenger = new Messenger(this);
-        userManager = new UserManager(this);
 
         Level level = Level.INFO;
         if (debug) level = Level.FINE;
         File logDir = null;
-        if (log) logDir = new File(getDataFolder(), "log");
+        if (log) logDir = FileUtil.getFile(getDataFolder(), "logs");
 
         Logger.enable(getName(), getLogger(), level, logDir);
+        CommandManager.enable(this);
+
+        Logger.getInstance().info("enable " + getName());
+
+        recorder = new Recorder(this);
+        messenger = new Messenger(this);
+        userManager = new UserManager(this);
 
         registerEvents(this);
 
