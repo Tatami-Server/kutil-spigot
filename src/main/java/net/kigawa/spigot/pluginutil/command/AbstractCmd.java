@@ -1,14 +1,14 @@
 package net.kigawa.spigot.pluginutil.command;
 
 import net.kigawa.log.LogSender;
-import net.kigawa.log.Logger;
 import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
 import net.kigawa.string.StringUtil;
 import org.bukkit.permissions.Permission;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
-import java.util.logging.Level;
 
 public abstract class AbstractCmd implements LogSender {
     private final String name;
@@ -26,13 +26,9 @@ public abstract class AbstractCmd implements LogSender {
 
     protected abstract boolean matchCommand(String command);
 
-    protected abstract boolean isVar();
+    protected abstract List<String> getTabComplete();
 
-    protected abstract void setValue(CommandVars commandVars, String value);
-
-    protected abstract boolean allowValue(String value);
-
-    String onCommand(LinkedList<String> strCmd, CommandLine commandLine) {
+    String onCommand(List<String> strCmd, CommandLine commandLine) {
         fine("onCommand " + name);
         if (strCmd.isEmpty()) {
             if (function == null) return error(commandLine);
@@ -43,6 +39,23 @@ public abstract class AbstractCmd implements LogSender {
         strCmd.remove(0);
         if (cmd != null) return cmd.onCommand(strCmd, commandLine);
         else return error(commandLine);
+    }
+
+    List<String> onTabComplete(List<String> strCmd) {
+        if (strCmd.size() == 1) return getMatchComplete(strCmd.get(0));
+        AbstractCmd abstractCmd = commands.getCommand(strCmd.get(0));
+        if (abstractCmd == null) return new ArrayList<>();
+        strCmd.remove(0);
+        return abstractCmd.onTabComplete(strCmd);
+    }
+
+    private List<String> getMatchComplete(String str) {
+        List<String> tab = new LinkedList<>(getTabComplete());
+        for (String cmd : tab) {
+            if (cmd.contains(str)) continue;
+            tab.remove(cmd);
+        }
+        return tab;
     }
 
     private boolean hasPermission(CommandLine commandLine) {

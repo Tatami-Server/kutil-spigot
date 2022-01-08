@@ -9,6 +9,7 @@ import org.bukkit.command.defaults.BukkitCommand;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 
 public class AbstractCmdProcess extends BukkitCommand {
@@ -19,6 +20,14 @@ public class AbstractCmdProcess extends BukkitCommand {
         this.command = command;
         command.setPermission(CommandManager.getInstance().getPluginBase().getName());
         CommandManager.getInstance().register(this);
+    }
+
+    @Override
+    @Nonnull
+    public List<String> tabComplete(@Nonnull CommandSender sender, @Nonnull String alias, @Nonnull String[] args) {
+        LinkedList<String> cmd = new LinkedList<>();
+        Collections.addAll(cmd, args);
+        return command.onTabComplete(cmd);
     }
 
     @Override
