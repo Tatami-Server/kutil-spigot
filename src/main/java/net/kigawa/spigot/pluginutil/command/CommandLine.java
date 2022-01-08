@@ -14,9 +14,16 @@ public class CommandLine implements Iterable<AbstractCmd> {
         this.sender = sender;
     }
 
-    void addCmd(AbstractCmd cmd, String strCmd) {
+     void addCmd(AbstractCmd cmd, String strCmd) {
         this.cmd.add(cmd);
         this.strCmd.add(strCmd);
+    }
+
+    public String getString(String varName) {
+        for (int i = 0; i < cmd.size(); i++) {
+            if (cmd.get(i).getName().equalsIgnoreCase(varName)) return strCmd.get(i);
+        }
+        return null;
     }
 
     public int size() {

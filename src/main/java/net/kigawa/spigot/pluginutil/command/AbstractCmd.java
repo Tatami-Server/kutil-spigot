@@ -17,16 +17,24 @@ public abstract class AbstractCmd implements LogSender {
     private Permission permission;
     private AbstractCmd commandParent;
 
-    public AbstractCmd(String name, Function<CommandLine, String> function, AbstractCmd... commands) {
+    public AbstractCmd(String name, Function<CommandLine, String> function, AbstractCmd... subcommands) {
         this.name = name;
         this.function = function;
-        if (commands != null) this.commands.addCommands(commands);
+        if (subcommands != null) this.commands.addCommands(subcommands);
         permission = new Permission(name);
     }
 
     protected abstract boolean matchCommand(String command);
 
-    protected abstract List<String> getTabComplete();
+    protected abstract List<String> completeVar();
+
+    List<String> getTabComplete() {
+        LinkedList<String> cmd = new LinkedList<>();
+        for (AbstractCmd abstractCmd : commands) {
+            cmd.addAll(abstractCmd.completeVar());
+        }
+        return cmd;
+    }
 
     String onCommand(List<String> strCmd, CommandLine commandLine) {
         fine("onCommand " + name);
