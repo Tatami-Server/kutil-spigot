@@ -46,7 +46,7 @@ public class CommandManager implements LogSender {
     }
 
     public void register(AbstractCmdProcess command) {
-        commandMap.register(command.getName(), command);
+        commandMap.register(pluginBase.getName(), command);
         commandList.add(command);
     }
 

@@ -5,20 +5,20 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class CustomCmd extends AbstractCmd {
+public class CmdCustom extends AbstractCmd {
     private Predicate<String> match;
     private Supplier<List<String>> complete;
 
-    public CustomCmd(String name, Function<CommandLine, String> function, AbstractCmd... subcommands) {
+    public CmdCustom(String name, Function<CommandLine, String> function, AbstractCmd... subcommands) {
         super(name, function, subcommands);
     }
 
-    public CustomCmd setMatch(Predicate<String> match) {
+    public CmdCustom setMatch(Predicate<String> match) {
         this.match = match;
         return this;
     }
 
-    public CustomCmd setComplete(Supplier<List<String>> complete) {
+    public CmdCustom setComplete(Supplier<List<String>> complete) {
         this.complete = complete;
         return this;
     }
