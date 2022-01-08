@@ -1,13 +1,16 @@
 package net.kigawa.spigot.pluginutil.command;
 
+import net.kigawa.log.LogSender;
+import net.kigawa.log.Logger;
 import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
 import net.kigawa.string.StringUtil;
 import org.bukkit.permissions.Permission;
 
 import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.logging.Level;
 
-public abstract class AbstractCmd {
+public abstract class AbstractCmd implements LogSender {
     private final String name;
     private final Function<CommandLine, String> function;
     private final Commands commands = new Commands();
@@ -30,12 +33,14 @@ public abstract class AbstractCmd {
     protected abstract boolean allowValue(String value);
 
     String onCommand(LinkedList<String> strCmd, CommandLine commandLine) {
+        fine("onCommand " + name);
         if (strCmd.isEmpty()) {
             if (function == null) return error(commandLine);
-            if (hasPermission(commandLine)) return function.apply(commandLine);
-            else return permissionError(commandLine);
+            if (!hasPermission(commandLine)) return permissionError(commandLine);
+            return logger.infoPass(function.apply(commandLine));
         }
         AbstractCmd cmd = commands.getCommand(strCmd.get(0));
+        strCmd.remove(0);
         if (cmd != null) return cmd.onCommand(strCmd, commandLine);
         else return error(commandLine);
     }
@@ -45,7 +50,7 @@ public abstract class AbstractCmd {
     }
 
     private String permissionError(CommandLine commandLine) {
-        return ErrorSender.getString("need permission: " + permission.getName());
+        return logger.infoPass(ErrorSender.getString("need permission: " + permission.getName()));
     }
 
     private String error(CommandLine commandLine) {
@@ -53,7 +58,7 @@ public abstract class AbstractCmd {
         cmd.addAll(getSubCommandDescription());
         StringBuffer sb = new StringBuffer("/");
         StringUtil.insertSymbol(sb, " ", cmd);
-        return ErrorSender.getString(sb.toString());
+        return logger.infoPass(ErrorSender.getString(sb.toString()));
     }
 
     private LinkedList<String> getSubCommandDescription() {
