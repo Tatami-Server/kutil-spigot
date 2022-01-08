@@ -2,7 +2,6 @@ package net.kigawa.spigot.pluginutil.game;
 
 import net.kigawa.interfaces.HasEnd;
 import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.spigot.pluginutil.command.CommandParent;
 import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
 import net.kigawa.util.Util;
 import org.bukkit.event.Listener;
@@ -15,7 +14,7 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
     private final List<G> gameList = new ArrayList<>();
     private final PluginBase plugin;
 
-    public GameManagerBase(PluginBase plugin, CommandParent command) {
+    public GameManagerBase(PluginBase plugin) {
         dataList = plugin.getRecorder().loadAll(getDataClass(), getName());
         this.plugin = plugin;
 
