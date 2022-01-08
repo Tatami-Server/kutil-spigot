@@ -6,7 +6,6 @@ import net.kigawa.spigot.pluginutil.PluginBase;
 import net.kigawa.spigot.pluginutil.SpigotUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
-import org.bukkit.command.PluginCommand;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -46,13 +45,12 @@ public class CommandManager implements LogSender {
         return null;
     }
 
-    public void setExecutor(AbstractCmdProcess cmdProcess) {
-        PluginCommand pluginCommand = pluginBase.getCommand(cmdProcess.getName());
-        if (pluginCommand == null) {
-            warning("can't register command");
-            return;
-        }
-        pluginCommand.setExecutor(cmdProcess);
-        commandList.add(cmdProcess);
+    public void register(AbstractCmdProcess command) {
+        commandMap.register(command.getName(), command);
+        commandList.add(command);
+    }
+
+    PluginBase getPluginBase() {
+        return pluginBase;
     }
 }

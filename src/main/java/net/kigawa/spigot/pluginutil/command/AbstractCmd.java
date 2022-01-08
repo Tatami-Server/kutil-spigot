@@ -1,19 +1,24 @@
 package net.kigawa.spigot.pluginutil.command;
 
-import org.bukkit.ChatColor;
+import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
+import net.kigawa.string.StringUtil;
+import org.bukkit.permissions.Permission;
 
+import java.util.LinkedList;
 import java.util.function.Function;
 
 public abstract class AbstractCmd {
     private final String name;
     private final Function<CommandLine, String> function;
     private final Commands commands = new Commands();
+    private Permission permission;
     private AbstractCmd commandParent;
 
     public AbstractCmd(String name, Function<CommandLine, String> function, AbstractCmd... commands) {
         this.name = name;
         this.function = function;
         if (commands != null) this.commands.addCommands(commands);
+        permission = new Permission(name);
     }
 
     protected abstract boolean matchCommand(String command);
@@ -24,43 +29,45 @@ public abstract class AbstractCmd {
 
     protected abstract boolean allowValue(String value);
 
-    protected String onCommand(CommandLine commandLine, int arg) {
-        if (arg != commandLine.size()) return error(commandLine);
-        if (function == null) return error(commandLine);
+    String onCommand(LinkedList<String> strCmd, CommandLine commandLine) {
+        if (strCmd.isEmpty()) {
+            if (function == null) return error(commandLine);
+            if (hasPermission(commandLine)) return function.apply(commandLine);
+            else return permissionError(commandLine);
+        }
+        AbstractCmd cmd = commands.getCommand(strCmd.get(0));
+        if (cmd != null) return cmd.onCommand(strCmd, commandLine);
+        else return error(commandLine);
+    }
 
-        String result = function.apply(commandLine);
-        if (result == null) return error(commandLine);
-        return result;
+    private boolean hasPermission(CommandLine commandLine) {
+        return commandLine.getSender().hasPermission(permission);
+    }
+
+    private String permissionError(CommandLine commandLine) {
+        return ErrorSender.getString("need permission: " + permission.getName());
     }
 
     private String error(CommandLine commandLine) {
-        AbstractCmd cmd = this;
-        CommandBuilder commandBuilder = new CommandBuilder();
-        do {
-            if (cmd.isVar()) commandBuilder.addVarBefore(cmd.getName());
-            else commandBuilder.addCmdBefore(cmd.getName());
-        } while ((cmd = cmd.getParent()) != null);
-
-        String subCommand = getSubCommandDescription();
-        if (subCommand != null) commandBuilder.addCmd(subCommand);
-
-        return ChatColor.RED + "Error: " + commandBuilder;
+        LinkedList<String> cmd = new LinkedList<>(commandLine.strCmd);
+        cmd.addAll(getSubCommandDescription());
+        StringBuffer sb = new StringBuffer("/");
+        StringUtil.insertSymbol(sb, " ", cmd);
+        return ErrorSender.getString(sb.toString());
     }
 
-    private String getSubCommandDescription() {
-        if (commands.size() == 0) return null;
-        if (commands.size() >= 2) return "<subcommand>";
+    private LinkedList<String> getSubCommandDescription() {
+        LinkedList<String> cmd = new LinkedList<>();
+        if (commands.size() == 0) return cmd;
+        if (commands.size() >= 2) {
+            cmd.add("<subcommand>");
+            return cmd;
+        }
+        AbstractCmd abstractCmd = commands.get(0);
+        cmd.add(abstractCmd.name);
+        cmd.addAll(abstractCmd.getSubCommandDescription());
 
-        AbstractCmd cmd = commands.get(0);
-        CommandBuilder commandBuilder = new CommandBuilder();
-
-        if (cmd.isVar()) commandBuilder.addVar(cmd.getName());
-        else commandBuilder.addCmd(cmd.getName());
-
-        String subCommand = cmd.getSubCommandDescription();
-        if (subCommand != null) commandBuilder.addCmd(subCommand);
-
-        return commandBuilder.toString();
+        return cmd;
     }
 
     public AbstractCmd getParent() {
@@ -84,6 +91,11 @@ public abstract class AbstractCmd {
 
     protected void setCommandParent(AbstractCmd commandParent) {
         this.commandParent = commandParent;
+        setPermission(commandParent.permission.getName());
+    }
+
+    void setPermission(String parent) {
+        permission = new Permission(parent + "." + name);
     }
 
     public boolean equals(Object o) {

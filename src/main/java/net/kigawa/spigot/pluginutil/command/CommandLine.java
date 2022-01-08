@@ -1,69 +1,34 @@
 package net.kigawa.spigot.pluginutil.command;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 
-public class CommandLine implements Iterable<String> {
-    private final List<String> commandLine = new ArrayList<>();
-    private final List<AbstractCmd> usedCommands = new ArrayList<>();
+public class CommandLine implements Iterable<AbstractCmd> {
+    final LinkedList<String> strCmd = new LinkedList<>();
+    final LinkedList<AbstractCmd> cmd = new LinkedList<>();
     private final CommandSender sender;
-    private final Command command;
-    private final CommandVars commandVars = new CommandVars();
 
-    protected CommandLine(CommandSender sender, Command command, String label, String[] strings) {
-        commandLine.add(label);
-        Collections.addAll(commandLine, strings);
+    protected CommandLine(CommandSender sender) {
         this.sender = sender;
-        this.command = command;
     }
 
-    public void addUsedCmd(AbstractCmd cmd) {
-        usedCommands.add(cmd);
-    }
-
-    public List<AbstractCmd> getUsedCommands() {
-        return new ArrayList<>(usedCommands);
+    void addCmd(AbstractCmd cmd, String strCmd) {
+        this.cmd.add(cmd);
+        this.strCmd.add(strCmd);
     }
 
     public int size() {
-        return commandLine.size();
-    }
-
-    public int getInt(String key) {
-        return commandVars.getInt(key);
-    }
-
-    public String getString(String key) {
-        return commandVars.getString(key);
-    }
-
-    public boolean getBoolean(String key) {
-        return commandVars.getBoolean(key);
-    }
-
-    public CommandVars getCommandVars() {
-        return commandVars;
-    }
-
-    protected List<String> getCommandLine() {
-        return new ArrayList<>(commandLine);
+        return cmd.size();
     }
 
     public CommandSender getSender() {
         return sender;
     }
 
-    public Command getCommand() {
-        return command;
-    }
-
     @Override
-    public Iterator<String> iterator() {
-        return commandLine.iterator();
+    public Iterator<AbstractCmd> iterator() {
+        return cmd.iterator();
     }
 }

@@ -1,49 +1,45 @@
 package net.kigawa.spigot.pluginutil.command;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.defaults.BukkitCommand;
 
-public class AbstractCmdProcess implements CommandExecutor {
+import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.LinkedList;
+
+public class AbstractCmdProcess extends BukkitCommand {
     private final AbstractCmd command;
 
     public AbstractCmdProcess(AbstractCmd command) {
+        super(command.getName());
         this.command = command;
-        CommandManager.getInstance().setExecutor(this);
-    }
-
-    public String getName() {
-        return command.getName();
+        command.setPermission(CommandManager.getInstance().getPluginBase().getName());
+        CommandManager.getInstance().register(this);
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        final CommandLine commandLine = new CommandLine(commandSender, command, s, strings);
-
-        Commands commands = null;
-        AbstractCmd latest = null;
-        CommandVars commandVars = commandLine.getCommandVars();
-        AbstractCmd cmd;
-        int arg = 0;
-
-        for (String cmdStr : commandLine) {
-            if (commands == null) cmd = this.command;
-            else cmd = commands.getCommand(cmdStr);
-
-            if (cmd == null) break;
-            if (cmd.isVar())
-                if (cmd.allowValue(cmdStr))
-                    cmd.setValue(commandVars, cmdStr);
-                else break;
-            latest = cmd;
-            commands = cmd.getCommands();
-            arg++;
-        }
-
-        if (latest == null) return false;
-
-        commandSender.sendMessage(latest.onCommand(commandLine,arg));
-
+    public boolean execute(@Nonnull CommandSender sender, @Nonnull String label, @Nonnull String[] subcommands) {
+        LinkedList<String> strCmd = new LinkedList<>();
+        CommandLine commandLine = new CommandLine(sender);
+        Collections.addAll(strCmd, subcommands);
+        commandLine.addCmd(command, label);
+        sender.sendMessage(command.onCommand(strCmd, commandLine));
         return true;
+    }
+
+    private boolean error(String message) {
+        Bukkit.broadcastMessage(message);
+        return false;
+    }
+
+    public AbstractCmd getCommand() {
+        return command;
+    }
+
+    @Override
+    public @Nonnull
+    String getName() {
+        return command.getName();
     }
 }
