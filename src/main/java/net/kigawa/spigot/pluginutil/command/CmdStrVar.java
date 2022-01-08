@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class CmdStVar extends AbstractCmd {
+public class CmdStrVar extends AbstractCmd {
     protected List<String> list = new ArrayList<>();
 
-    public CmdStVar(String name, Function<CommandLine, String> function, AbstractCmd... subcommands) {
+    public CmdStrVar(String name, Function<CommandLine, String> function, AbstractCmd... subcommands) {
         super(name, function, subcommands);
     }
 
