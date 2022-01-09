@@ -1,5 +1,6 @@
 package net.kigawa.spigot.pluginutil.command;
 
+import net.kigawa.log.Logger;
 import org.bukkit.command.CommandSender;
 
 import java.util.Iterator;
@@ -20,6 +21,8 @@ public class CommandLine implements Iterable<AbstractCmd> {
     }
 
     public String getString(String varName) {
+        Logger.getInstance().fine(strCmd);
+        Logger.getInstance().fine(cmd);
         for (int i = 0; i < cmd.size(); i++) {
             if (cmd.get(i).getName().equalsIgnoreCase(varName)) return strCmd.get(i);
         }
