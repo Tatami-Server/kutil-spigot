@@ -3,8 +3,10 @@ package net.kigawa.spigot.pluginutil;
 import net.kigawa.file.FileUtil;
 import net.kigawa.interfaces.HasEnd;
 import net.kigawa.log.Logger;
+import net.kigawa.log.ResendLog;
 import net.kigawa.spigot.pluginutil.command.CommandManager;
 import net.kigawa.spigot.pluginutil.command.CommandParent;
+import net.kigawa.spigot.pluginutil.log.ResendPluginLog;
 import net.kigawa.spigot.pluginutil.message.Messenger;
 import net.kigawa.spigot.pluginutil.player.User;
 import net.kigawa.spigot.pluginutil.player.UserManager;
@@ -71,11 +73,11 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
         log = config.getBoolean("log");
 
         Level level = Level.INFO;
-        if (debug) level = Level.FINE;
+        if (debug) level = Level.FINEST;
         File logDir = null;
         if (log) logDir = FileUtil.getFile(getDataFolder(), "logs");
 
-        Logger.enable(getName(), getLogger(), level, logDir);
+        Logger.enable(getName(), getLogger(), level, logDir, new ResendPluginLog(getLogger(), Level.INFO));
         CommandManager.enable(this);
 
         Logger.getInstance().info("enable " + getName());
