@@ -63,8 +63,7 @@ public abstract class AbstractCmd implements LogSender {
     private List<String> getMatchComplete(String str) {
         List<String> tab = new LinkedList<>(getTabComplete());
         for (String cmd : getTabComplete()) {
-            if (cmd == null) continue;
-            if (cmd.contains(str)) continue;
+            if (cmd != null && cmd.contains(str)) continue;
             tab.remove(cmd);
         }
         return tab;
