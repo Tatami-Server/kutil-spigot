@@ -21,7 +21,6 @@ public class CommandLine implements Iterable<AbstractCmd> {
     }
 
     public String getString(String varName) {
-        Logger.getInstance().fine(strCmd, cmd);
         for (int i = 0; i < cmd.size(); i++) {
             if (cmd.get(i).getName().equalsIgnoreCase(varName)) return strCmd.get(i);
         }

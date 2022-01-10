@@ -1,6 +1,7 @@
 package net.kigawa.spigot.pluginutil.game;
 
 import net.kigawa.interfaces.HasEnd;
+import net.kigawa.log.Logger;
 import net.kigawa.spigot.pluginutil.PluginBase;
 import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
 import net.kigawa.util.Util;
@@ -73,23 +74,23 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
     }
 
     public String create(String name, String world) {
-        plugin.logger("create game...");
+        Logger.getInstance().info("create game...");
         D data = getData(name);
-        if (data != null) return name + " is exit";
+        if (data != null) return Logger.getInstance().infoPass(name + " is exit");
         data = newData();
         data.setName(name);
         data.setWorld(world);
         getDataList().add(data);
         save(data);
-        return name + " is created";
+        return Logger.getInstance().infoPass(name + " is created");
     }
 
     public String start(String name) {
         G game = getGame(name);
-        if (game != null) return ErrorSender.getString(name + "is already started");
+        if (game != null) return ErrorSender.getString(Logger.getInstance().infoPass(name + "is already started"));
 
         D data = getData(name);
-        if (data == null) return ErrorSender.getString(name + "is not exit");
+        if (data == null) return ErrorSender.getString(Logger.getInstance().infoPass(name + "is not exit"));
 
         game = newGame(data);
         gameList.add(game);

@@ -11,11 +11,12 @@ public class ResendPluginLog extends ResendLog {
     public ResendPluginLog(Logger logger, Level level) {
         super(logger, level);
         setFormatter(new Formatter());
+        setLevel(Level.ALL);
     }
 
     @Override
     public void publish(LogRecord record) {
-        if (record.getLevel().intValue() > Level.INFO.intValue()) {
+        if (record.getLevel().intValue() < Level.INFO.intValue()) {
             super.publish(record);
         }
     }

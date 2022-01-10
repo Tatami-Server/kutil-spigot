@@ -43,13 +43,16 @@ public abstract class AbstractCmd implements LogSender {
             if (!hasPermission(commandLine)) return permissionError(commandLine);
             return logger.infoPass(function.apply(commandLine));
         }
-        AbstractCmd cmd = commands.getCommand(strCmd.get(0));
+        String str = strCmd.get(0);
+        AbstractCmd cmd = commands.getCommand(str);
         strCmd.remove(0);
-        if (cmd != null) return cmd.onCommand(strCmd, commandLine);
-        else return error(commandLine);
+        if (cmd != null) {
+            commandLine.addCmd(cmd, str);
+            return cmd.onCommand(strCmd, commandLine);
+        } else return error(commandLine);
     }
 
-    List<String> onTabComplete(List<String> strCmd) {
+    synchronized List<String> onTabComplete(List<String> strCmd) {
         if (strCmd.size() == 1) return getMatchComplete(strCmd.get(0));
         AbstractCmd abstractCmd = commands.getCommand(strCmd.get(0));
         if (abstractCmd == null) return new ArrayList<>();
@@ -59,7 +62,7 @@ public abstract class AbstractCmd implements LogSender {
 
     private List<String> getMatchComplete(String str) {
         List<String> tab = new LinkedList<>(getTabComplete());
-        for (String cmd : tab) {
+        for (String cmd : getTabComplete()) {
             if (cmd.contains(str)) continue;
             tab.remove(cmd);
         }

@@ -3,7 +3,6 @@ package net.kigawa.spigot.pluginutil;
 import net.kigawa.file.FileUtil;
 import net.kigawa.interfaces.HasEnd;
 import net.kigawa.log.Logger;
-import net.kigawa.log.ResendLog;
 import net.kigawa.spigot.pluginutil.command.CommandManager;
 import net.kigawa.spigot.pluginutil.command.CommandParent;
 import net.kigawa.spigot.pluginutil.log.ResendPluginLog;
@@ -18,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +112,7 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
         User.onDisable(this);
 
         disable();
+        Logger.getInstance().disable();
     }
 
     public Messenger getMessenger() {
@@ -168,5 +169,9 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
 
     public CommandParent getCommandParent() {
         return null;
+    }
+
+    public net.kigawa.log.Logger getOriginalLogger() {
+        return Logger.getInstance();
     }
 }
