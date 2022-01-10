@@ -26,7 +26,9 @@ public class Tool {
     }
 
     public void event(PlayerInteractEvent event) {
-        if (event.getItem().equals(itemStack)) consumer.accept(event);
+        ItemStack itemStack = event.getItem();
+        if (itemStack == null) return;
+        if (itemStack.equals(this.itemStack)) consumer.accept(event);
     }
 
     public ItemStack getItemStack() {

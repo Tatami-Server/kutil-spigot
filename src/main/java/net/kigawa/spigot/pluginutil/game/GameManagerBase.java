@@ -87,10 +87,10 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
 
     public String start(String name) {
         G game = getGame(name);
-        if (game != null) return ErrorSender.getString(Logger.getInstance().infoPass(name + "is already started"));
+        if (game != null) return ErrorSender.getString(Logger.getInstance().infoPass(name + " is already started"));
 
         D data = getData(name);
-        if (data == null) return ErrorSender.getString(Logger.getInstance().infoPass(name + "is not exit"));
+        if (data == null) return ErrorSender.getString(Logger.getInstance().infoPass(name + " is not exit"));
 
         game = newGame(data);
         gameList.add(game);

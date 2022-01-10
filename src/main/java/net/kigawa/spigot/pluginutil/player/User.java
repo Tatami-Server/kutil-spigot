@@ -194,7 +194,7 @@ public class User<U extends User<U>> {
 
     public Team getTeam(String teamName) {
         Team team = scoreboard.getTeam(teamName);
-        if (team != null) team = scoreboard.registerNewTeam(teamName);
+        if (team == null) team = scoreboard.registerNewTeam(teamName);
         return team;
     }
 
