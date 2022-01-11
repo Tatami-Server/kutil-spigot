@@ -1,34 +1,47 @@
 package net.kigawa.spigot.pluginutil.command;
 
-import net.kigawa.log.Logger;
 import org.bukkit.command.CommandSender;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class CommandLine implements Iterable<AbstractCmd> {
-    final LinkedList<String> strCmd = new LinkedList<>();
-    final LinkedList<AbstractCmd> cmd = new LinkedList<>();
+    final LinkedList<String> strCmdList = new LinkedList<>();
+    final LinkedList<AbstractCmd> cmdList = new LinkedList<>();
     private final CommandSender sender;
 
     protected CommandLine(CommandSender sender) {
         this.sender = sender;
     }
 
-     void addCmd(AbstractCmd cmd, String strCmd) {
-        this.cmd.add(cmd);
-        this.strCmd.add(strCmd);
+    void addCmd(AbstractCmd cmd, String strCmd) {
+        this.cmdList.add(cmd);
+        this.strCmdList.add(strCmd);
     }
 
     public String getString(String varName) {
-        for (int i = 0; i < cmd.size(); i++) {
-            if (cmd.get(i).getName().equalsIgnoreCase(varName)) return strCmd.get(i);
+        for (int i = 0; i < cmdList.size(); i++) {
+            if (cmdList.get(i).getName().equalsIgnoreCase(varName)) return strCmdList.get(i);
+        }
+        return null;
+    }
+
+    public int getInt(String varName) {
+        AbstractCmd cmd = getCmd(varName);
+        if (cmd == null) return -1;
+        if (cmd instanceof CmdIntVar) return -1;
+        return Integer.parseInt(strCmdList.get(this.cmdList.indexOf(cmd)));
+    }
+
+    private AbstractCmd getCmd(String varName) {
+        for (AbstractCmd cmd : cmdList) {
+            if (cmd.getName().equalsIgnoreCase(varName)) return cmd;
         }
         return null;
     }
 
     public int size() {
-        return cmd.size();
+        return cmdList.size();
     }
 
     public CommandSender getSender() {
@@ -37,6 +50,6 @@ public class CommandLine implements Iterable<AbstractCmd> {
 
     @Override
     public Iterator<AbstractCmd> iterator() {
-        return cmd.iterator();
+        return cmdList.iterator();
     }
 }

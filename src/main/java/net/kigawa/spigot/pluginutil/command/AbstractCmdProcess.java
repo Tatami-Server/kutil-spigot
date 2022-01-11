@@ -63,7 +63,7 @@ public class AbstractCmdProcess extends BukkitCommand {
     }
 
     public void addCommand(AbstractCmd... abstractCmd) {
-        command.addCommands(abstractCmd);
+        command.addCmd(abstractCmd);
     }
 
     @Override

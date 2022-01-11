@@ -78,7 +78,7 @@ public abstract class AbstractCmd implements LogSender {
     }
 
     private String error(CommandLine commandLine) {
-        LinkedList<String> cmd = new LinkedList<>(commandLine.strCmd);
+        LinkedList<String> cmd = new LinkedList<>(commandLine.strCmdList);
         cmd.addAll(getSubCommandDescription());
         StringBuffer sb = new StringBuffer("/");
         StringUtil.insertSymbol(sb, " ", cmd);
@@ -99,6 +99,14 @@ public abstract class AbstractCmd implements LogSender {
         return cmd;
     }
 
+    public AbstractCmd addCmd(AbstractCmd... commands) {
+        this.commands.addCommands(commands);
+        for (AbstractCmd cmd : commands) {
+            cmd.setCommandParent(this);
+        }
+        return this;
+    }
+
     public AbstractCmd getParent() {
         return commandParent;
     }
@@ -107,11 +115,11 @@ public abstract class AbstractCmd implements LogSender {
         return commands;
     }
 
+    /**
+     * @deprecated
+     */
     public void addCommands(AbstractCmd... commands) {
-        this.commands.addCommands(commands);
-        for (AbstractCmd cmd : commands) {
-            cmd.setCommandParent(this);
-        }
+        addCmd(commands);
     }
 
     public String getName() {
