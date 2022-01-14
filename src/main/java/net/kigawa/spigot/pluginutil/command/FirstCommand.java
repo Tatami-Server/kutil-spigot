@@ -3,6 +3,7 @@ package net.kigawa.spigot.pluginutil.command;
 import net.kigawa.spigot.pluginutil.PluginBase;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 
 import java.util.List;
@@ -10,12 +11,16 @@ import java.util.List;
 public abstract class FirstCommand extends Command implements CommandExecutor, TabCompleter {
     PluginBase plugin;
 
-    public FirstCommand(PluginBase plugin) {
-        super(plugin);
+    public FirstCommand(PluginBase plugin, CommandParent commandParent) {
+        super(plugin, commandParent);
         this.plugin = plugin;
 
-        plugin.getCommand(getName()).setExecutor(this);
-        plugin.getCommand(getName()).setTabCompleter(this);
+        plugin.addCommand(this);
+
+        PluginCommand command = plugin.getCommand(getName());
+        assert command != null;
+        command.setExecutor(this);
+        command.setTabCompleter(this);
     }
 
     @Override
@@ -24,7 +29,7 @@ public abstract class FirstCommand extends Command implements CommandExecutor, T
     }
 
     @Override
-    public void addSubcommands(Command subCommand) {
+    public void addCommand(Command subCommand) {
         getSubCommands().add(subCommand);
         addTabLists(subCommand);
         subCommand.setParentCommand(this);

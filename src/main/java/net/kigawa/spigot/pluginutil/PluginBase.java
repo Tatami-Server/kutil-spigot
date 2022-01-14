@@ -1,5 +1,6 @@
 package net.kigawa.spigot.pluginutil;
 
+import net.kigawa.spigot.pluginutil.command.CommandParent;
 import net.kigawa.spigot.pluginutil.command.FirstCommand;
 import net.kigawa.spigot.pluginutil.message.Messenger;
 import net.kigawa.spigot.pluginutil.player.PlayerGetter;
@@ -19,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PluginBase extends JavaPlugin implements Logger, Listener {
+public abstract class PluginBase extends JavaPlugin implements Logger, Listener, CommandParent {
     private final List<FirstCommand> commands = new ArrayList<>();
     private final List<HasEnd> hasEnds = new ArrayList<>();
     private boolean debug;

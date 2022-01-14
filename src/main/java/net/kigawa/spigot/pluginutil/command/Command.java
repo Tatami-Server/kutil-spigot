@@ -6,17 +6,18 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Command extends TabList {
+public abstract class Command extends TabList implements CommandParent {
     private PluginBase plugin;
     private List<Command> subCommands;
     private List<String> permissions;
     private Command parentCommand;
 
 
-    public Command(PluginBase kigawaPlugin) {
-        super(kigawaPlugin);
-        plugin = kigawaPlugin;
+    public Command(PluginBase pluginBase, CommandParent commandParent) {
+        super(pluginBase);
+        plugin = pluginBase;
 
+        commandParent.addCommand(this);
         subCommands = new ArrayList<>();
     }
 
@@ -67,7 +68,8 @@ public abstract class Command extends TabList {
         }
     }
 
-    public void addSubcommands(Command subCommand) {
+    @Override
+    public void addCommand(Command subCommand) {
         subCommand.setParentCommand(this);
         subCommands.add(subCommand);
         addTabLists(subCommand);
