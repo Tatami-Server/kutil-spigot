@@ -3,7 +3,6 @@ package net.kigawa.spigot.pluginutil.game;
 import net.kigawa.interfaces.HasEnd;
 import net.kigawa.log.Logger;
 import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
 import net.kigawa.util.Util;
 import org.bukkit.event.Listener;
 
@@ -85,18 +84,6 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
         return Logger.getInstance().infoPass(name + " is created");
     }
 
-    public String start(String name) {
-        G game = getGame(name);
-        if (game != null) return ErrorSender.getString(Logger.getInstance().infoPass(name + " is already started"));
-
-        D data = getData(name);
-        if (data == null) return ErrorSender.getString(Logger.getInstance().infoPass(name + " is not exit"));
-
-        game = newGame(data);
-        gameList.add(game);
-        return game.start();
-    }
-
     public D getData(String name) {
         for (D data : dataList) {
             if (data.getName() == null) continue;
@@ -113,7 +100,9 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
                 return gameBase;
             }
         }
-        return null;
+        D data = getData(name);
+        if (data == null) return null;
+        return newGame(data);
     }
 
     public List<G> getGameList() {

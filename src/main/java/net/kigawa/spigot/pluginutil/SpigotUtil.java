@@ -1,19 +1,27 @@
 package net.kigawa.spigot.pluginutil;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.List;
 
 public class SpigotUtil {
+
+    public static ItemStack getPlayerHead(OfflinePlayer player) {
+        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+        if (meta == null) return null;
+        meta.setOwningPlayer(player);
+        itemStack.setItemMeta(meta);
+        return itemStack;
+
+    }
 
     public static String getCraftPackage() {
         String nmsVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
