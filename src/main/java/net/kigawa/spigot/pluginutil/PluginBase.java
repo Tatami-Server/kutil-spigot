@@ -17,7 +17,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +76,7 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
         File logDir = null;
         if (log) logDir = FileUtil.getFile(getDataFolder(), "logs");
 
-        Logger.enable(getName(), getLogger(), level, logDir, new ResendPluginLog(getLogger(), Level.INFO));
+        new Logger(getName(), getLogger(), level, logDir, new ResendPluginLog(getLogger(), Level.INFO)).enable();
         CommandManager.enable(this);
 
         Logger.getInstance().info("enable " + getName());

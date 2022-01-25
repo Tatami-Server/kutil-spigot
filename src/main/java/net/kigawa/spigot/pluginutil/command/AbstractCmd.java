@@ -41,7 +41,7 @@ public abstract class AbstractCmd implements LogSender {
         if (strCmd.isEmpty()) {
             if (function == null) return error(commandLine);
             if (!hasPermission(commandLine)) return permissionError(commandLine);
-            return logger.infoPass(function.apply(commandLine));
+            return infoPass(function.apply(commandLine));
         }
         String str = strCmd.get(0);
         AbstractCmd cmd = commands.getCommand(str);
@@ -74,7 +74,7 @@ public abstract class AbstractCmd implements LogSender {
     }
 
     private String permissionError(CommandLine commandLine) {
-        return logger.infoPass(ErrorSender.getString("need permission: " + permission.getName()));
+        return infoPass(ErrorSender.getString("need permission: " + permission.getName()));
     }
 
     private String error(CommandLine commandLine) {
@@ -82,7 +82,7 @@ public abstract class AbstractCmd implements LogSender {
         cmd.addAll(getSubCommandDescription());
         StringBuffer sb = new StringBuffer("/");
         StringUtil.insertSymbol(sb, " ", cmd);
-        return logger.infoPass(ErrorSender.getString(sb.toString()));
+        return infoPass(ErrorSender.getString(sb.toString()));
     }
 
     private LinkedList<String> getSubCommandDescription() {
