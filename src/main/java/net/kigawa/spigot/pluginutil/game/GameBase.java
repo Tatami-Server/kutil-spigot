@@ -75,9 +75,10 @@ public abstract class GameBase<D extends GameDataBase, M extends GameManagerBase
     }
 
     public String end() {
+        var end = onEnd();
         stopTimer();
         manager.removeGame(this);
-        return onEnd();
+        return end;
     }
 
     public String start() {
