@@ -6,7 +6,7 @@
 
     <groupId>net.kigawa.spigot</groupId>
     <artifactId>spigot-util</artifactId>
-    <version>3.8dev</version>
+    <version>3.9dev</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
