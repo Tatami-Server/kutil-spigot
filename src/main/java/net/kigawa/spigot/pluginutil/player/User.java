@@ -231,7 +231,9 @@ public class User<U extends User<U>> {
     }
 
     public boolean isJoinTeam(String name) {
-        return getTeam().getName().equals(name);
+        var team = getTeam();
+        if (team == null) return false;
+        return team.getName().equals(name);
     }
 
     public void sendToolBar(StringBuffer sb) {
