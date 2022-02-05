@@ -29,6 +29,7 @@ public class Tool {
         ItemStack itemStack = event.getItem();
         if (itemStack == null) return;
         if (itemStack.equals(this.itemStack)) consumer.accept(event);
+        event.setCancelled(true);
     }
 
     public ItemStack getItemStack() {
