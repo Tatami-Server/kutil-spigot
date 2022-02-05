@@ -28,7 +28,8 @@ public class Tool {
     public void event(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
         if (itemStack == null) return;
-        if (itemStack.equals(this.itemStack)) consumer.accept(event);
+        if (!itemStack.equals(this.itemStack)) return;
+        consumer.accept(event);
         event.setCancelled(true);
     }
 
