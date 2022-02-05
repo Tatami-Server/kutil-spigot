@@ -122,7 +122,6 @@ public class StorageManager implements Listener {
 
     @EventHandler
     public void inventoryClickEvent(InventoryClickEvent event) {
-        plugin.logger("inventoryClickEvent(InventoryClickEvent event)");
         for (Menu menu : new ArrayList<>(menuList)) {
             menu.onClick(event);
         }
