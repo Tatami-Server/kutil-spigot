@@ -50,8 +50,7 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
     public String end(String name) {
         G game = getGame(name);
         if (game == null) return "game is not started";
-        String end = game.end();
-        return end;
+        return game.end();
     }
 
     public void removeGame(G game) {
