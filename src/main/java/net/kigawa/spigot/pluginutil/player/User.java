@@ -120,6 +120,16 @@ public class User<U extends User<U>> {
         event.getPlayer().teleport(location);
     }
 
+    public void sendTitle(String title, String subTitle) {
+        sendTitle(title, subTitle, 10, 15, 10);
+    }
+
+    public void sendTitle(String title, String subTitle, int fadeIn, int stay, int fadeOut) {
+        if (isOnline) {
+            player.sendTitle(title, subTitle, fadeIn, stay, fadeOut);
+        }
+    }
+
     public void addTool(Tool... tool) {
         ItemStack[] itemStacks = new ItemStack[tool.length];
         for (int i = 0; i < tool.length; i++) itemStacks[i] = tool[i].getItemStack();
