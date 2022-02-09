@@ -102,7 +102,9 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
         }
         D data = getData(name);
         if (data == null) return null;
-        return newGame(data);
+        var game = newGame(data);
+        gameList.add(game);
+        return game;
     }
 
     public List<G> getGameList() {
