@@ -120,6 +120,12 @@ public class User<U extends User<U>> {
         event.getPlayer().teleport(location);
     }
 
+    public void playSound(Location location, Sound sound, float volume, float pitch) {
+        if (isOnline) {
+            player.playSound(location, sound, volume, pitch);
+        }
+    }
+
     public void sendTitle(String title, String subTitle) {
         sendTitle(title, subTitle, 10, 15, 10);
     }
