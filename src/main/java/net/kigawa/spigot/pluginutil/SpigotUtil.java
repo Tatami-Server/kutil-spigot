@@ -1,4 +1,4 @@
-package net.kigawa.spigot.pluginutil.SpigotUtil;
+package net.kigawa.spigot.pluginutil;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;

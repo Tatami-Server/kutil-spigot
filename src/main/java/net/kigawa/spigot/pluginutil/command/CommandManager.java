@@ -3,7 +3,7 @@ package net.kigawa.spigot.pluginutil.command;
 import net.kigawa.log.LogSender;
 import net.kigawa.log.Logger;
 import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.spigot.pluginutil.SpigotUtil.SpigotUtil;
+import net.kigawa.spigot.pluginutil.SpigotUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 
