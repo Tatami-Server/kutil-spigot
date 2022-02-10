@@ -120,6 +120,13 @@ public class User<U extends User<U>> {
         event.getPlayer().teleport(location);
     }
 
+    public Location getLocation() {
+        if (isOnline) {
+            return player.getLocation();
+        }
+        return null;
+    }
+
     public void playSound(Location location, Sound sound, float volume, float pitch) {
         if (isOnline) {
             player.playSound(location, sound, volume, pitch);
