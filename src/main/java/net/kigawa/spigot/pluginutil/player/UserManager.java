@@ -1,7 +1,7 @@
 package net.kigawa.spigot.pluginutil.player;
 
+import net.kigawa.kutil.kutil.Kutil;
 import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.util.Util;
 import net.kigawa.yamlutil.Yaml;
 import net.kigawa.yamlutil.YamlData;
 import org.bukkit.*;
@@ -39,7 +39,7 @@ public class UserManager<U extends User> implements Listener {
         if (yaml == null) {
             File dir = Paths.get("").toAbsolutePath().toFile();
             File user = new File(dir, "user");
-            yaml = new Yaml(user, new CustomClassLoaderConstructor(PluginBase.class.getClassLoader()));
+            yaml = new Yaml(user, new CustomClassLoaderConstructor(PluginBase.class.getClassLoader()), PluginBase.logger);
         }
         return yaml;
     }
@@ -153,8 +153,8 @@ public class UserManager<U extends User> implements Listener {
         }
     }
 
-    public void executeUser(Util.Process<U> process) {
-        Util.executeIterable(userList, process);
+    public void executeUser(Kutil.Process<U> process) {
+        Kutil.executeIterable(userList, process);
     }
 
     public void sendTitleMessage(String title) {

@@ -1,6 +1,6 @@
 package net.kigawa.spigot.pluginutil.message.sender;
 
-import net.kigawa.util.Util;
+import net.kigawa.kutil.kutil.Kutil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,8 +15,8 @@ public class InfoSender extends Sender {
     }
 
     public InfoSender(String title, List<Player> players) {
-        super(Util.changeListType(players, CommandSender.class));
-        sendMessage(Util.changeListType(players, CommandSender.class), ChatColor.GREEN + title);
+        super(Kutil.changeListType(players, CommandSender.class));
+        sendMessage(Kutil.changeListType(players, CommandSender.class), ChatColor.GREEN + title);
     }
 
     public static String getString(String message) {

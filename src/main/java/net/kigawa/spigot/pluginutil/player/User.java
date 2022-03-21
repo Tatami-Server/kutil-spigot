@@ -1,12 +1,12 @@
 package net.kigawa.spigot.pluginutil.player;
 
+import net.kigawa.kutil.kutil.Kutil;
 import net.kigawa.spigot.pluginutil.PluginBase;
 import net.kigawa.spigot.pluginutil.inventory.PlayerStorage;
 import net.kigawa.spigot.pluginutil.inventory.Storage;
 import net.kigawa.spigot.pluginutil.inventory.StorageManager;
 import net.kigawa.spigot.pluginutil.message.Messenger;
 import net.kigawa.spigot.pluginutil.tool.Tool;
-import net.kigawa.util.Util;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -333,7 +333,7 @@ public class User<U extends User<U>> {
         }
         UserData data = UserManager.loadData(getUuidStr());
         if (data.getShowUUID() == null) data.setShowUUID(new String[0]);
-        data.setShowUUID(Util.addStrSet(data.getShowUUID(), user.getUuidStr()));
+        data.setShowUUID(Kutil.addStrSet(data.getShowUUID(), user.getUuidStr()));
         UserManager.saveData(data);
     }
 
@@ -345,7 +345,7 @@ public class User<U extends User<U>> {
         }
 
         UserData data = UserManager.loadData(getUuidStr());
-        data.setHideUUID(Util.addStrSet(data.getHideUUID(), user.getUuidStr()));
+        data.setHideUUID(Kutil.addStrSet(data.getHideUUID(), user.getUuidStr()));
         UserManager.saveData(data);
     }
 

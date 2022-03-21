@@ -1,9 +1,8 @@
 package net.kigawa.spigot.pluginutil.game;
 
-import net.kigawa.interfaces.HasEnd;
-import net.kigawa.log.Logger;
+import net.kigawa.kutil.kutil.Kutil;
+import net.kigawa.kutil.kutil.interfaces.HasEnd;
 import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.util.Util;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
@@ -32,8 +31,8 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
 
     public abstract Class<G> getGameClass();
 
-    public void execGame(Util.Process<G> process) {
-        Util.executeIterable(getGameList(), process);
+    public void execGame(Kutil.Process<G> process) {
+        Kutil.executeIterable(getGameList(), process);
     }
 
     public void save(D data) {
@@ -72,15 +71,15 @@ public abstract class GameManagerBase<D extends GameDataBase, G extends GameBase
     }
 
     public String create(String name, String world) {
-        Logger.getInstance().info("create game...");
+        PluginBase.logger.info("create game...");
         D data = getData(name);
-        if (data != null) return Logger.getInstance().infoPass(name + " is exit");
+        if (data != null) return PluginBase.logger.infoPass(name + " is exit");
         data = newData();
         data.setName(name);
         data.setWorld(world);
         getDataList().add(data);
         save(data);
-        return Logger.getInstance().infoPass(name + " is created");
+        return PluginBase.logger.infoPass(name + " is created");
     }
 
     public D getData(String name) {

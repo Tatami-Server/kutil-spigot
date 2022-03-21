@@ -1,11 +1,10 @@
 package net.kigawa.spigot.pluginutil;
 
-import net.kigawa.file.FileUtil;
-import net.kigawa.interfaces.HasEnd;
-import net.kigawa.log.Logger;
+import net.kigawa.kutil.kutil.KutilFile;
+import net.kigawa.kutil.kutil.interfaces.HasEnd;
+import net.kigawa.kutil.log.log.Logger;
 import net.kigawa.spigot.pluginutil.command.CommandManager;
 import net.kigawa.spigot.pluginutil.command.CommandParent;
-import net.kigawa.spigot.pluginutil.log.ResendPluginLog;
 import net.kigawa.spigot.pluginutil.message.Messenger;
 import net.kigawa.spigot.pluginutil.player.User;
 import net.kigawa.spigot.pluginutil.player.UserManager;
@@ -26,8 +25,8 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
     public static boolean debug;
     public static boolean useDB;
     public static boolean log;
+    public static Logger logger;
     private final List<HasEnd> hasEnds = new ArrayList<>();
-    private net.kigawa.log.Logger logger;
     private Recorder recorder;
     private Messenger messenger;
     private UserManager userManager;
@@ -74,12 +73,13 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
         Level level = Level.INFO;
         if (debug) level = Level.FINEST;
         File logDir = null;
-        if (log) logDir = FileUtil.getFile(getDataFolder(), "logs");
+        if (log) logDir = KutilFile.getFile(getDataFolder(), "logs");
 
-        new Logger(getName(), getLogger(), level, logDir, new ResendPluginLog(getLogger(), Level.INFO)).enable();
+        logger = new Logger(getName(), getLogger(), level, logDir);
+        logger.enable();
         CommandManager.enable(this);
 
-        Logger.getInstance().info("enable " + getName());
+        logger.info("enable " + getName());
 
         recorder = new Recorder(this);
         messenger = new Messenger(this);
@@ -168,9 +168,5 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
 
     public CommandParent getCommandParent() {
         return null;
-    }
-
-    public net.kigawa.log.Logger getOriginalLogger() {
-        return Logger.getInstance();
     }
 }

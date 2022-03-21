@@ -1,8 +1,8 @@
 package net.kigawa.spigot.pluginutil.command;
 
-import net.kigawa.log.LogSender;
+import net.kigawa.kutil.kutil.KutilString;
+import net.kigawa.spigot.pluginutil.PluginBase;
 import net.kigawa.spigot.pluginutil.message.sender.ErrorSender;
-import net.kigawa.string.StringUtil;
 import org.bukkit.permissions.Permission;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class AbstractCmd implements LogSender {
+public abstract class AbstractCmd {
     private final String name;
     private final Function<CommandLine, String> function;
     private final Commands commands = new Commands();
@@ -37,11 +37,11 @@ public abstract class AbstractCmd implements LogSender {
     }
 
     String onCommand(List<String> strCmd, CommandLine commandLine) {
-        fine("onCommand " + name);
+        PluginBase.logger.fine("onCommand " + name);
         if (strCmd.isEmpty()) {
             if (function == null) return error(commandLine);
             if (!hasPermission(commandLine)) return permissionError(commandLine);
-            return infoPass(function.apply(commandLine));
+            return PluginBase.logger.infoPass(function.apply(commandLine));
         }
         String str = strCmd.get(0);
         AbstractCmd cmd = commands.getCommand(str);
@@ -74,15 +74,15 @@ public abstract class AbstractCmd implements LogSender {
     }
 
     private String permissionError(CommandLine commandLine) {
-        return infoPass(ErrorSender.getString("need permission: " + permission.getName()));
+        return PluginBase.logger.infoPass(ErrorSender.getString("need permission: " + permission.getName()));
     }
 
     private String error(CommandLine commandLine) {
         LinkedList<String> cmd = new LinkedList<>(commandLine.strCmdList);
         cmd.addAll(getSubCommandDescription());
         StringBuffer sb = new StringBuffer("/");
-        StringUtil.insertSymbol(sb, " ", cmd);
-        return infoPass(ErrorSender.getString(sb.toString()));
+        KutilString.insertSymbol(sb, " ", cmd);
+        return PluginBase.logger.infoPass(ErrorSender.getString(sb.toString()));
     }
 
     private LinkedList<String> getSubCommandDescription() {

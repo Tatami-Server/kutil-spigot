@@ -1,7 +1,6 @@
-import net.kigawa.util.Util;
+import net.kigawa.kutil.kutil.Kutil;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -72,7 +71,7 @@ public class SpigotRunner {
     }
 
     private void copyPlugins(File root) {
-        Util.runCommand(new String[]{
+        Kutil.runCommand(new String[]{
                 MAVEN, "package", "-f", "pom.xml"
         }, root);
 
@@ -153,12 +152,10 @@ public class SpigotRunner {
     private void buildSpigot() {
         try {
             URL url = new URL("https://hub.spigotmc.org/jenkins/job/BuildTools/lastStableBuild/artifact/target/BuildTools.jar");
-            Util.download(url, spigotDir, "BuildTools.jar");
-            Util.runCommand(new String[]{
+            Kutil.download(url, spigotDir, "BuildTools.jar");
+            Kutil.runCommand(new String[]{
                     JAVA, "-jar", "BuildTools.jar", "--rev", SPIGOT_VERSION
             }, spigotDir);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

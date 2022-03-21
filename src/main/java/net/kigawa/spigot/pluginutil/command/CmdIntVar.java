@@ -1,6 +1,6 @@
 package net.kigawa.spigot.pluginutil.command;
 
-import net.kigawa.string.StringUtil;
+import net.kigawa.kutil.kutil.KutilString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class CmdIntVar extends AbstractCmd {
 
     @Override
     protected boolean matchCommand(String command) {
-        if (!StringUtil.isInt(command)) return false;
+        if (!KutilString.isInt(command)) return false;
         int value = Integer.parseInt(command);
         if (value >= max) return false;
         if (value <= min) return false;

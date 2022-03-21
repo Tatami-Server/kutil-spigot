@@ -1,7 +1,5 @@
 package net.kigawa.spigot.pluginutil.command;
 
-import net.kigawa.log.LogSender;
-import net.kigawa.log.Logger;
 import net.kigawa.spigot.pluginutil.PluginBase;
 import net.kigawa.spigot.pluginutil.SpigotUtil;
 import org.bukkit.Bukkit;
@@ -12,7 +10,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandManager implements LogSender {
+public class CommandManager {
     private static CommandManager commandManager;
     private static CommandMap commandMap;
 
@@ -34,7 +32,7 @@ public class CommandManager implements LogSender {
             Method method = cla.getMethod("getCommandMap");
             commandMap = (CommandMap) method.invoke(Bukkit.getServer());
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            Logger.getInstance().warning(e);
+            PluginBase.logger.warning(e);
         }
     }
 

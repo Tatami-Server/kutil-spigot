@@ -1,7 +1,8 @@
 package net.kigawa.spigot.pluginutil.command;
 
-import net.kigawa.log.Logger;
-import net.kigawa.string.StringUtil;
+import net.kigawa.kutil.kutil.KutilString;
+import net.kigawa.kutil.log.log.Logger;
+import net.kigawa.spigot.pluginutil.PluginBase;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -37,7 +38,7 @@ public class AbstractCmdProcess extends BukkitCommand {
         Collections.addAll(strCmd, subcommands);
         commandLine.addCmd(command, label);
 
-        Logger.getInstance().anSyncLog(new Logger.Log() {
+        PluginBase.logger.log(new Logger.Log() {
             @Override
             public String toString() {
                 LinkedList<String> result = new LinkedList<>();
@@ -45,7 +46,7 @@ public class AbstractCmdProcess extends BukkitCommand {
                 result.addAll(strCmd);
                 StringBuffer sb = new StringBuffer(sender.getName());
                 sb.append(": /");
-                return StringUtil.insertSymbol(sb, " ", result).toString();
+                return KutilString.insertSymbol(sb, " ", result).toString();
             }
         }, Level.INFO);
 
