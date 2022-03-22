@@ -31,31 +31,7 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
     private Messenger messenger;
     private UserManager userManager;
 
-    public abstract void addConfigDefault(FileConfiguration config);
-
-    public abstract void enable();
-
-    public abstract void disable();
-
-    public abstract void load();
-
-    /**
-     * @deprecated
-     */
-    public void onStart() {
-    }
-
-
-    @Override
-    public void onLoad() {
-        Logger.getInstance().info("loading...");
-
-
-        load();
-    }
-
-    @Override
-    public void onEnable() {
+    public PluginBase() {
         this.saveDefaultConfig();
         FileConfiguration config = this.getConfig();
         config.addDefault("debug", false);
@@ -77,6 +53,34 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
 
         logger = new Logger(getName(), getLogger(), level, logDir);
         logger.enable();
+    }
+
+    public abstract void addConfigDefault(FileConfiguration config);
+
+    public abstract void enable();
+
+    public abstract void disable();
+
+    public abstract void load();
+
+    /**
+     * @deprecated
+     */
+    public void onStart() {
+    }
+
+
+    @Override
+    public void onLoad() {
+        logger.info("loading...");
+
+
+        load();
+    }
+
+    @Override
+    public void onEnable() {
+
         CommandManager.enable(this);
 
         logger.info("enable " + getName());
@@ -104,14 +108,14 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
 
     @Override
     public void onDisable() {
-        Logger.getInstance().info("disable " + getName());
+        logger.info("disable " + getName());
         for (HasEnd hasEnd : hasEnds) {
             hasEnd.end();
         }
         User.onDisable(this);
 
         disable();
-        Logger.getInstance().disable();
+        logger.disable();
     }
 
     public Messenger getMessenger() {
