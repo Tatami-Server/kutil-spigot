@@ -12,6 +12,7 @@
 
 ## About
 
+* spigotPluginのベースとなるクラスなど
 
 ## Command
 
@@ -33,6 +34,7 @@
 
 ## ToDo
 
+* [ ] ドキュメント
 
 ## sample
 
