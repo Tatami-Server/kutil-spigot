@@ -63,5 +63,10 @@
             <artifactId>kutil</artifactId>
             <version>1.2dev</version>
         </dependency>
+        <dependency>
+            <groupId>net.kigawa.kutil</groupId>
+            <artifactId>data</artifactId>
+            <version>1.0dev</version>
+        </dependency>
     </dependencies>
 </project>
