@@ -35,7 +35,6 @@ public abstract class PluginBase extends JavaPlugin implements Listener, Command
         this.saveDefaultConfig();
         FileConfiguration config = this.getConfig();
         config.addDefault("debug", false);
-        config.addDefault("useDB", false);
         config.addDefault("log", true);
 
         addConfigDefault(config);
