@@ -1,6 +1,7 @@
 package net.kigawa.spigot.pluginutil.command;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -42,6 +43,11 @@ public class CommandLine implements Iterable<AbstractCmd> {
 
     public int size() {
         return cmdList.size();
+    }
+
+    public Player getPlayer() {
+        if (sender instanceof Player) return (Player) sender;
+        return null;
     }
 
     public CommandSender getSender() {
