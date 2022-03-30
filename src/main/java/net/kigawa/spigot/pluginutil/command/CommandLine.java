@@ -29,8 +29,10 @@ public class CommandLine implements Iterable<AbstractCmd> {
 
     public int getInt(String varName) {
         AbstractCmd cmd = getCmd(varName);
-        if (cmd == null) return -1;
-        if (cmd instanceof CmdIntVar) return -1;
+        if (cmd == null) {
+            return -1;
+        }
+        if (!(cmd instanceof CmdIntVar)) return -2;
         return Integer.parseInt(strCmdList.get(this.cmdList.indexOf(cmd)));
     }
 
