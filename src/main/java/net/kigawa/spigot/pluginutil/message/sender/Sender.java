@@ -1,6 +1,7 @@
 package net.kigawa.spigot.pluginutil.message.sender;
 
-import net.kigawa.util.Util;
+import net.kigawa.kutil.kutil.Kutil;
+import net.kigawa.kutil.kutil.KutilString;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -29,8 +30,9 @@ public class Sender {
     }
 
     public void sendItem(String itemName, int[] description) {
-
-        sendItem(itemName, Util.createString(description));
+        var sb = new StringBuffer();
+        KutilString.insertSymbol(sb, ",", Kutil.castIntArray(description, new Integer[description.length]), Object::toString);
+        sendItem(itemName, sb.toString());
     }
 
     public void sendItem(String itemName, int i) {

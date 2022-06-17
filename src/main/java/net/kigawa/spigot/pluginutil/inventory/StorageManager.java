@@ -1,13 +1,11 @@
 package net.kigawa.spigot.pluginutil.inventory;
 
-import net.kigawa.bordgameplugin.player.User;
-import net.kigawa.bordgameplugin.util.plugin.all.PluginBase;
+import net.kigawa.spigot.pluginutil.PluginBase;
+import net.kigawa.spigot.pluginutil.player.User;
 import org.bukkit.Server;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +22,24 @@ public class StorageManager implements Listener {
         server = plugin.getServer();
 
         plugin.registerEvents(this);
+    }
+
+    public void removeMenu(String name) {
+        List<Menu> menuList = getMenu(name);
+        for (Menu menu : menuList) {
+            menu.close();
+        }
+        this.menuList.removeAll(menuList);
+    }
+
+    public List<Menu> getMenu(String name) {
+        List<Menu> menuList = new ArrayList<>();
+        for (Menu menu : this.menuList) {
+            if (menu.equals(name)) {
+                menuList.add(menu);
+            }
+        }
+        return menuList;
     }
 
     public void removeMenu(User user, String name) {
@@ -106,26 +122,8 @@ public class StorageManager implements Listener {
 
     @EventHandler
     public void inventoryClickEvent(InventoryClickEvent event) {
-        plugin.logger("inventoryClickEvent(InventoryClickEvent event)");
         for (Menu menu : new ArrayList<>(menuList)) {
             menu.onClick(event);
-        }
-        for (PlayerStorage playerStorage : playerStorageList) {
-            playerStorage.inventoryClickEvent(event);
-        }
-    }
-
-    @EventHandler
-    public void playerDropItemEvent(PlayerDropItemEvent event) {
-        for (PlayerStorage storage : playerStorageList) {
-            storage.playerDropItemEvent(event);
-        }
-    }
-
-    @EventHandler
-    public void playerInteractEvent(PlayerInteractEvent event) {
-        for (PlayerStorage storage : playerStorageList) {
-            storage.playerInteractEvent(event);
         }
     }
 }

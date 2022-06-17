@@ -1,9 +1,12 @@
 package net.kigawa.spigot.pluginutil.player;
 
+import net.kigawa.kutil.kutil.Kutil;
 import net.kigawa.spigot.pluginutil.PluginBase;
+import net.kigawa.spigot.pluginutil.inventory.PlayerStorage;
 import net.kigawa.spigot.pluginutil.inventory.Storage;
+import net.kigawa.spigot.pluginutil.inventory.StorageManager;
 import net.kigawa.spigot.pluginutil.message.Messenger;
-import net.kigawa.util.Util;
+import net.kigawa.spigot.pluginutil.tool.Tool;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -12,6 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -20,20 +24,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class User {
+public class User<U extends User<U>> {
     private final UUID uuid;
-    private final UserManager manager;
+    private final UserManager<U> manager;
     private Player player;
+    private PlayerStorage<U> playerStorage;
     private boolean isOnline;
     private List<String> groupList = new ArrayList<>();
     private String name;
     private Scoreboard scoreboard;
+    private boolean allowFly;
+    private List<User> hideUser = new ArrayList<>();
 
     private User(OfflinePlayer player, UserManager userManager, boolean isOnline) {
         this.isOnline = isOnline;
         this.manager = userManager;
         assert manager != null;
-        manager.addUser(this);
+        manager.addUser((U) this);
         uuid = player.getUniqueId();
         name = player.getName();
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -42,6 +49,7 @@ public class User {
     public User(Player player, UserManager manager) {
         this(player, manager, true);
         this.player = player;
+        allowFly = player.getAllowFlight();
     }
 
     public User(OfflinePlayer player, UserManager manager) {
@@ -112,6 +120,78 @@ public class User {
         event.getPlayer().teleport(location);
     }
 
+    public Location getLocation() {
+        if (isOnline) {
+            return player.getLocation();
+        }
+        return null;
+    }
+
+    public void playSound(Location location, Sound sound, float volume, float pitch) {
+        if (isOnline) {
+            player.playSound(location, sound, volume, pitch);
+        }
+    }
+
+    public void sendTitle(String title, String subTitle) {
+        sendTitle(title, subTitle, 10, 15, 10);
+    }
+
+    public void sendTitle(String title, String subTitle, int fadeIn, int stay, int fadeOut) {
+        if (isOnline) {
+            player.sendTitle(title, subTitle, fadeIn, stay, fadeOut);
+        }
+    }
+
+    public void addTool(Tool... tool) {
+        ItemStack[] itemStacks = new ItemStack[tool.length];
+        for (int i = 0; i < tool.length; i++) itemStacks[i] = tool[i].getItemStack();
+        addItem(itemStacks);
+    }
+
+    public void addItem(ItemStack... itemStack) {
+        player.getInventory().addItem(itemStack);
+    }
+
+    public U getUser() {
+        return (U) this;
+    }
+
+    public PlayerStorage<U> getPlayerStorage(StorageManager storageManager) {
+        if (playerStorage == null) playerStorage = new PlayerStorage<U>(getUser(), name, storageManager);
+        return playerStorage;
+    }
+
+    public void setTeamDisplayName(String teamName, String displayName) {
+        Team team = getTeam(teamName);
+        team.setDisplayName(displayName);
+    }
+
+    public void setTeamColor(String teamName, ChatColor color) {
+        Team team = getTeam(teamName);
+        team.setColor(color);
+    }
+
+    public void joinEvent(PlayerJoinEvent event) {
+        player = event.getPlayer();
+        isOnline = true;
+        name = player.getName();
+        player.setScoreboard(scoreboard);
+        player.setAllowFlight(allowFly);
+        for (User user : hideUser) {
+            hide(manager.getPlugin(), user);
+        }
+        for (U user : manager.getUserList()) {
+            user.checkHide(this);
+        }
+    }
+
+    public void checkHide(User user) {
+        if (hideUser.contains(user)) {
+            hide(manager.getPlugin(), user);
+        }
+    }
+
     public void setMainScoreBord() {
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         player.setScoreboard(scoreboard);
@@ -127,15 +207,17 @@ public class User {
     }
 
     public void setTeam(String teamStr) {
-        if (teamStr == null) return;
-        Team team = getTeam(teamStr);
-        if (team == null) team = scoreboard.registerNewTeam(teamStr);
+        setTeam(teamStr, name);
+    }
+
+    public void setTeam(String teamName, String name) {
+        Team team = getTeam(teamName);
         team.addEntry(name);
     }
 
     public Team getTeam(String teamName) {
         Team team = scoreboard.getTeam(teamName);
-        if (team != null) team = scoreboard.registerNewTeam(teamName);
+        if (team == null) team = scoreboard.registerNewTeam(teamName);
         return team;
     }
 
@@ -148,6 +230,7 @@ public class User {
     }
 
     public void setAllowFly(boolean fly) {
+        allowFly = fly;
         if (isOnline) {
             player.setAllowFlight(fly);
         }
@@ -155,7 +238,7 @@ public class User {
 
     public void setFly(boolean fly) {
         if (isOnline && player.getAllowFlight()) {
-            player.setFlying(fly);
+            player.setFlying(allowFly);
         }
     }
 
@@ -171,7 +254,9 @@ public class User {
     }
 
     public boolean isJoinTeam(String name) {
-        return getTeam().getName().equals(name);
+        var team = getTeam();
+        if (team == null) return false;
+        return team.getName().equals(name);
     }
 
     public void sendToolBar(StringBuffer sb) {
@@ -241,24 +326,26 @@ public class User {
     }
 
     public void show(Plugin plugin, User user) {
+        hideUser.remove(user);
         if (isOnline && user.isOnline) {
             player.showPlayer(plugin, user.getPlayer());
             return;
         }
         UserData data = UserManager.loadData(getUuidStr());
         if (data.getShowUUID() == null) data.setShowUUID(new String[0]);
-        data.setShowUUID(Util.addStrSet(data.getShowUUID(), user.getUuidStr()));
+        data.setShowUUID(Kutil.addStrSet(data.getShowUUID(), user.getUuidStr()));
         UserManager.saveData(data);
     }
 
     public void hide(Plugin plugin, User user) {
+        hideUser.add(user);
         if (isOnline && user.isOnline) {
             player.hidePlayer(plugin, user.getPlayer());
             return;
         }
 
         UserData data = UserManager.loadData(getUuidStr());
-        data.setHideUUID(Util.addStrSet(data.getHideUUID(), user.getUuidStr()));
+        data.setHideUUID(Kutil.addStrSet(data.getHideUUID(), user.getUuidStr()));
         UserManager.saveData(data);
     }
 
@@ -280,12 +367,6 @@ public class User {
 
     public boolean containGroup(String name) {
         return groupList.contains(name);
-    }
-
-    public void joinEvent(PlayerJoinEvent event) {
-        player = event.getPlayer();
-        isOnline = true;
-        name = player.getName();
     }
 
     public Scoreboard getScoreboard() {
@@ -322,7 +403,7 @@ public class User {
         return null;
     }
 
-    public UserManager getManager() {
+    public UserManager<U> getManager() {
         return manager;
     }
 }

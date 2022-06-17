@@ -1,7 +1,6 @@
 package net.kigawa.spigot.pluginutil.inventory;
 
-import net.kigawa.spigot.pluginutil.inventory.button.Button;
-import net.kigawa.spigot.pluginutil.inventory.button.DecideButton;
+import net.kigawa.spigot.pluginutil.inventory.button.ButtonBase;
 import net.kigawa.spigot.pluginutil.inventory.button.NextPage;
 import net.kigawa.spigot.pluginutil.inventory.button.PreviousPage;
 import net.kigawa.spigot.pluginutil.player.User;
@@ -10,12 +9,12 @@ import org.bukkit.Server;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public abstract class Menu extends Storage {
+public class Menu extends Storage {
     private final int page;
     private final User user;
     private Menu next;
     private Menu previous;
-    private Button[] buttons;
+    private ButtonBase[] buttons;
 
     public Menu(Server server, User user, String title, String name, StorageManager storageManager) {
         this(server, user, title, 0, name, storageManager);
@@ -27,22 +26,29 @@ public abstract class Menu extends Storage {
         this.user = user;
         setSize(getInventory().getSize());
         setup();
+
+        getStorageManager().addMenu(this);
     }
 
     public boolean equals(User user) {
         return this.user.equals(user);
     }
 
-    public void setDecideButton() {
-        setButton(40, new DecideButton(user));
+    public void setDecideButton(ButtonBase button) {
+        setButton(40, button);
     }
 
-    public Button[] getButtons() {
+    public ButtonBase[] getButtons() {
         return buttons;
     }
 
+    public void resetMenu() {
+        clear();
+        setup();
+    }
+
     public void setup() {
-        buttons = new Button[56];
+        buttons = new ButtonBase[56];
         getItemStack(0);
         setType(Material.RAIL);
         getItemMeta();
@@ -72,12 +78,13 @@ public abstract class Menu extends Storage {
         fill(1, 7);
         fill(46, 52);
 
-        getStorageManager().addMenu(this);
+        setNextPage(next);
+        setPreviousPage(previous);
     }
 
     public void onClick(InventoryClickEvent event) {
         if (getInventory() == event.getClickedInventory() && 0 <= event.getSlot()) {
-            Button button = buttons[event.getSlot()];
+            ButtonBase button = buttons[event.getSlot()];
             event.setCancelled(true);
             if (button == null) {
                 return;
@@ -94,7 +101,7 @@ public abstract class Menu extends Storage {
     }
 
     public void setNextPage(Menu menu) {
-        next.setPrevious(null);
+        if (next != null) next.setPrevious(null);
         setNext(menu);
         if (menu == null) {
             return;
@@ -103,9 +110,7 @@ public abstract class Menu extends Storage {
     }
 
     public void setPreviousPage(Menu menu) {
-        if (previous != null) {
-            previous.setNext(null);
-        }
+        if (previous != null) previous.setNext(null);
         setPrevious(menu);
         if (menu == null) {
             return;
@@ -113,7 +118,7 @@ public abstract class Menu extends Storage {
         menu.setNext(this);
     }
 
-    public void setButton(int index, Button button) {
+    public void setButton(int index, ButtonBase button) {
         buttons[index] = button;
         getItemStack(index);
         if (button.getType() != null) {
@@ -146,7 +151,7 @@ public abstract class Menu extends Storage {
     private void setPrevious(Menu previous) {
         this.previous = previous;
         if (previous != null) {
-            Button button = new PreviousPage(this);
+            ButtonBase button = new PreviousPage(this);
             setButton(39, button);
         } else {
             removeButton(39);
@@ -163,7 +168,7 @@ public abstract class Menu extends Storage {
     private void setNext(Menu next) {
         this.next = next;
         if (next != null) {
-            Button button = new NextPage(this);
+            ButtonBase button = new NextPage(this);
             setButton(41, button);
         } else {
             removeButton(41);

@@ -1,8 +1,8 @@
 package net.kigawa.spigot.pluginutil.message.sender;
 
 
+import net.kigawa.kutil.kutil.Kutil;
 import net.kigawa.spigot.pluginutil.message.Messenger;
-import net.kigawa.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ public class ErrorSender extends Sender {
     }
 
     public ErrorSender(String title, List<Player> senders) {
-        super(Util.changeListType(senders, CommandSender.class));
+        super(Kutil.changeListType(senders, CommandSender.class));
         Messenger.sendMessage(senders, title);
     }
 

@@ -1,13 +1,10 @@
 package net.kigawa.spigot.pluginutil.player;
 
+import net.kigawa.kutil.kutil.Kutil;
 import net.kigawa.spigot.pluginutil.PluginBase;
-import net.kigawa.util.Util;
 import net.kigawa.yamlutil.Yaml;
 import net.kigawa.yamlutil.YamlData;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,7 +18,10 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 
 public class UserManager<U extends User> implements Listener {
     private static Yaml yaml;
@@ -39,7 +39,7 @@ public class UserManager<U extends User> implements Listener {
         if (yaml == null) {
             File dir = Paths.get("").toAbsolutePath().toFile();
             File user = new File(dir, "user");
-            yaml = new Yaml(user, new CustomClassLoaderConstructor(PluginBase.class.getClassLoader()));
+            yaml = new Yaml(user, new CustomClassLoaderConstructor(PluginBase.class.getClassLoader()), PluginBase.logger);
         }
         return yaml;
     }
@@ -52,7 +52,51 @@ public class UserManager<U extends User> implements Listener {
         getUserYaml().save(data);
     }
 
+    public <T> U getUser(T object, BiPredicate<U, T> biPredicate) {
+        for (U user : userList) {
+            if (biPredicate.test(user, object)) return user;
+        }
+        return null;
+    }
+
+    public <U extends User> void joinTeamRandomUser(String teamName, int max, List<U> userList) {
+        int index;
+        Random random = new Random();
+        for (int i = 0; i < max; i++) {
+            if (userList.isEmpty()) {
+                break;
+            }
+            index = random.nextInt(userList.size());
+            U user = userList.get(index);
+            setTeamAll(teamName, user.getName());
+            userList.remove(index);
+        }
+    }
+
+    public void setTeamDisplayNameAll(String team, String displayName) {
+        executeUser((U u) -> u.setTeamDisplayName(team, displayName));
+    }
+
+    public void setTeamColorAll(String team, ChatColor color) {
+        executeUser((U u) -> u.setTeamColor(team, color));
+    }
+
+    public void setTeamAll(String team, String entry) {
+        executeUser((U u) -> u.setTeam(team, entry));
+    }
+
+    public void setNewScoreboardAll() {
+        executeUser(User::setNewScoreBord);
+    }
+
+    /**
+     * @deprecated
+     */
     public void clearEveryInv() {
+        clearInventoryAll();
+    }
+
+    public void clearInventoryAll() {
         executeUser(User::clearInventory);
     }
 
@@ -101,8 +145,16 @@ public class UserManager<U extends User> implements Listener {
         team.unregister();
     }
 
-    public void executeUser(Util.Process<U> process) {
-        Util.executeProcesses(userList, process);
+    public void execTeamUser(String teamName, Consumer<U> consumer) {
+        for (U user : userList) {
+            if (user.isJoinTeam(teamName)) {
+                consumer.accept(user);
+            }
+        }
+    }
+
+    public void executeUser(Kutil.Process<U> process) {
+        Kutil.executeIterable(userList, process);
     }
 
     public void sendTitleMessage(String title) {
