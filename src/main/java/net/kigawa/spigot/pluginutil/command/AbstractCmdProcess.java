@@ -7,16 +7,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 
-import javax.annotation.Nonnull;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class AbstractCmdProcess extends BukkitCommand {
+public class AbstractCmdProcess extends BukkitCommand
+{
     private final AbstractCmd command;
 
-    public AbstractCmdProcess(AbstractCmd command) {
+    public AbstractCmdProcess(AbstractCmd command)
+    {
         super(command.getName());
         this.command = command;
         command.setPermission(CommandManager.getInstance().getPluginBase().getName());
@@ -24,23 +26,27 @@ public class AbstractCmdProcess extends BukkitCommand {
     }
 
     @Override
-    @Nonnull
-    public List<String> tabComplete(@Nonnull CommandSender sender, @Nonnull String alias, @Nonnull String[] args) {
+
+    public List<String> tabComplete(CommandSender sender, String alias, String[] args)
+    {
         LinkedList<String> cmd = new LinkedList<>();
         Collections.addAll(cmd, args);
         return command.onTabComplete(cmd);
     }
 
     @Override
-    public boolean execute(@Nonnull CommandSender sender, @Nonnull String label, @Nonnull String[] subcommands) {
+    public boolean execute(CommandSender sender, String label, String[] subcommands)
+    {
         LinkedList<String> strCmd = new LinkedList<>();
         CommandLine commandLine = new CommandLine(sender);
         Collections.addAll(strCmd, subcommands);
         commandLine.addCmd(command, label);
 
-        PluginBase.logger.log(new Logger.Log() {
+        PluginBase.logger.log(new Logger.Log()
+        {
             @Override
-            public String toString() {
+            public String toString()
+            {
                 LinkedList<String> result = new LinkedList<>();
                 result.add(label);
                 result.addAll(strCmd);
@@ -54,22 +60,25 @@ public class AbstractCmdProcess extends BukkitCommand {
         return true;
     }
 
-    protected boolean error(String message) {
+    protected boolean error(String message)
+    {
         Bukkit.broadcastMessage(message);
         return false;
     }
 
-    public AbstractCmd getCommand() {
+    public AbstractCmd getCommand()
+    {
         return command;
     }
 
-    public void addCommand(AbstractCmd... abstractCmd) {
+    public void addCommand(AbstractCmd... abstractCmd)
+    {
         command.addCmd(abstractCmd);
     }
 
     @Override
-    public @Nonnull
-    String getName() {
+    public String getName()
+    {
         return command.getName();
     }
 }
